@@ -5,11 +5,16 @@ import Login from "@/pages/Login";
 import Participants from "@/pages/Participants";
 import { createBrowserRouter } from "react-router-dom";
 import ProtectedRoutes from "./ProtectedRoutes";
+import PublicRoutes from "./PublicRoutes";
 
 export const AppRoutes = createBrowserRouter([
     {
         path: "/login",
-        element: <Login />,
+        element: (
+            <PublicRoutes>
+                <Login />
+            </PublicRoutes>
+        ),
     },
     {
         path: "/",

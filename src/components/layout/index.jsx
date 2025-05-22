@@ -7,7 +7,7 @@ const MainLayout = () => {
     const { pathname } = useLocation();
 
     if (pathname === "/") {
-        return <Navigate to={"/dashboard"} />;
+        return <Navigate to={"/Calendar"} />;
     }
 
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
