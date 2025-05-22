@@ -35,7 +35,7 @@ export default function ParticipantForm({
     name: '',
     email: '',
     phone: '',
-    avatar_color: AVATAR_COLORS[0],
+    color: AVATAR_COLORS[0],
   })
   const [errors, setErrors] = useState({})
 
@@ -45,7 +45,7 @@ export default function ParticipantForm({
         name: '',
         email: '',
         phone: '',
-        avatar_color:
+        color:
           AVATAR_COLORS[Math.floor(Math.random() * AVATAR_COLORS.length)],
 
       })
@@ -159,12 +159,12 @@ export default function ParticipantForm({
                 <div
                   key={color}
                   className={`w-6 h-6 rounded-full cursor-pointer ${
-                    formData.avatar_color === color
+                    formData.color === color
                       ? 'ring-2 ring-offset-2 ring-black'
                       : ''
                   }`}
                   style={{ backgroundColor: color }}
-                  onClick={() => handleInputChange('avatar_color', color)}
+                  onClick={() => handleInputChange('color', color)}
                 />
               ))}
             </div>

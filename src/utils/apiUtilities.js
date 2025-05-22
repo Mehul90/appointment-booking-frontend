@@ -4,7 +4,7 @@ const { apiURL } = envSettings;
 
 export const apiEndPoints = {
     createParticipants: "/api/participants/create",
-    getParticipants: "/api/participants",
+    getParticipants: "/api/participants/list",
     updateParticipants: (participantId) =>  `/api/participants/update/${participantId}`,
     deleteParticipants: (participantId) => `/api/participants/delete/${participantId}`,
 };
@@ -26,25 +26,23 @@ export async function mastersAPICall({ endPoint, method, params }) {
             const requestOptions = {
                 method: method,
                 url: baseURL,
-                data: params,
                 headers: {
                     "Content-Type": "application/json",
                     Accept: "application/json",
+                    'ngrok-skip-browser-warning': true
                 },
             };
 
             // if the method is GET, remove the body from the request options
-            if (method === APIMethods.GET) {
-                delete requestOptions.body;
+            if (method === APIMethods.POST || method === APIMethods.PUT) {
+                requestOptions.data = params;
             }
 
             const response = await axios({...requestOptions});
 ;
             const responseData = await response.data;
-            // if the response is not ok
-            if (response.status === 200) {
-                return resolve({ data: responseData, error: false, message: "Success" });
-            }
+            
+            return resolve({ data: responseData, error: false, message: "Success" });
 
     
         } catch (error) {

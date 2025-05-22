@@ -23,7 +23,7 @@ import {
 } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { useDispatch } from 'react-redux';
-import { createParticipants } from '@/store/slices/participantsSlice';
+import { createParticipants, deleteParticipants, getAllParticipants, updateParticipants } from '@/store/slices/participantsSlice';
 
 export default function Participants() {
   const [participants, setParticipants] = useState([]);
@@ -46,11 +46,12 @@ export default function Participants() {
     setIsLoading(true);
     try {
       const [participantsData, appointmentsData] = await Promise.all([
-        Participant.list(),
+        dispatch(getAllParticipants()),
         Appointment.list()
       ]);
-      setParticipants(participantsData);
-      setAppointments(appointmentsData);
+      setParticipants(participantsData.payload);
+      setAppointments(appointmentsData); 
+
     } catch (error) {
       console.error('Error loading data:', error);
     }
@@ -80,7 +81,11 @@ export default function Participants() {
           loadData();
         });
       } else {
-        await Participant.update(currentParticipant.id, participantData);
+        // await Participant.update(currentParticipant.id, participantData);
+        dispatch(updateParticipants({id: currentParticipant.id, participantData})).then(() => {
+          setIsFormOpen(false);
+          loadData();
+        })
       }
       
     } catch (error) {
@@ -91,19 +96,18 @@ export default function Participants() {
   const handleDeleteParticipant = async (participantId) => {
     if (confirm('Are you sure you want to delete this participant? This will not delete any appointments.')) {
       try {
-        await Participant.delete(participantId);
-        setIsFormOpen(false);
-        loadData();
+        dispatch(deleteParticipants(participantId)).then(() => {
+          setIsFormOpen(false);
+          loadData();
+          
+        }).catch((error) => {
+          setIsFormOpen(false);
+          loadData();
+        });
       } catch (error) {
         console.error('Error deleting participant:', error);
       }
     }
-  };
-
-  const handleViewAppointments = (participant) => {
-    // Navigate to Calendar page with filter
-    // In a real implementation, you would filter the calendar to show only this participant's appointments
-    alert(`Viewing appointments for ${participant.name}`);
   };
 
   const getAppointmentsCountForParticipant = (participantId) => {
@@ -282,7 +286,7 @@ export default function Participants() {
               appointmentsCount={getAppointmentsCountForParticipant(participant.id)}
               onEdit={handleEditParticipant}
               onDelete={handleDeleteParticipant}
-              onViewAppointments={handleViewAppointments}
+              // onViewAppointments={handleViewAppointments}
             />
           ))}
         </div>

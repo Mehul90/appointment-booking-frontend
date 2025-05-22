@@ -18,6 +18,44 @@ export const createParticipants = createAsyncThunk(
     }
 );
 
+export const getAllParticipants = createAsyncThunk(
+    "participants/getAllParticipants",
+    async (_, { rejectWithValue }) => {
+        try {
+            const response = await mastersAPICall({ endPoint: apiEndPoints.getParticipants, method: APIMethods.GET  })
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.message);
+        }
+    }
+);
+
+export const deleteParticipants = createAsyncThunk(
+    "participants/deleteParticipants",
+    async (data, { rejectWithValue, dispatch  }) => {
+        try {
+            const response = await mastersAPICall({ endPoint: apiEndPoints.deleteParticipants(data), method: APIMethods.DELETE  })
+
+            return fulfillWithValue(response.data);
+        } catch (error) {
+            return rejectWithValue(error.message);
+        }
+    }
+);
+
+export const updateParticipants = createAsyncThunk(
+    "participants/updateParticipants",
+    async (data, { rejectWithValue, fulfillWithValue }) => {
+        try {
+            const response = await mastersAPICall({ endPoint: apiEndPoints.updateParticipants(data.id), method: APIMethods.PUT, params: data.participantData  })
+
+            return fulfillWithValue(response.data);
+        } catch (error) {
+            return rejectWithValue(error.message);
+        }
+    }
+);
+
 export const participantsSlice = createSlice({
     name: "participants",
     initialState,
@@ -36,6 +74,18 @@ export const participantsSlice = createSlice({
             })
             .addCase(createParticipants.pending, (state, action) => {
                 console.log("Pending");
+            })
+            .addCase(getAllParticipants.fulfilled, (state, action) => {
+                state.participantsList = [...state.participantsList, ...action.payload];
+                console.log("Fulfiled");
+                // set the state with the response data
+            })
+            .addCase(getAllParticipants.rejected, (state, action) => {
+                state.participantsList = [...state.participantsList];
+                state.participantsList = action.payload;
+            })
+            .addCase(getAllParticipants.pending, (state, action) => {
+                state.participantsList = [...state.participantsList];
             });
     },
 });

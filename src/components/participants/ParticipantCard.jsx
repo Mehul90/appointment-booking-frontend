@@ -61,10 +61,6 @@ export default function ParticipantCard({
                   <Edit className="h-4 w-4 mr-2" />
                   Edit
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => onViewAppointments(participant)}>
-                  <CalendarClock className="h-4 w-4 mr-2" />
-                  View Appointments
-                </DropdownMenuItem>
                 <DropdownMenuItem 
                   onClick={() => onDelete(participant.id)}
                   className="text-red-600"
