@@ -3,6 +3,9 @@ import { envSettings } from "./env.config";
 const { apiURL } = envSettings;
 
 export const apiEndPoints = {
+    // Login endpoints
+    userLogin: "/api/login",
+
     // Participants endpoints
     createParticipants: "/api/participants/create",
     getParticipants: "/api/participants/list",
@@ -41,19 +44,28 @@ export async function mastersAPICall({ endPoint, method, params }) {
                 },
             };
 
+            // remove Authorization header if endPoint is login
+            if (endPoint === apiEndPoints.userLogin) {
+                delete requestOptions.headers.Authorization;
+            }
+
             // if the method is GET, remove the body from the request options
             if (method === APIMethods.POST || method === APIMethods.PUT) {
                 requestOptions.data = params;
             }
 
             const response = await axios({...requestOptions});
-;
             const responseData = await response.data;
             
             return resolve({ data: responseData, error: false, message: "Success" });
 
     
         } catch (error) {
+            // if token is expired, remove the token and redirect to login page
+            if(error.status === 401) {
+                document.dispatchEvent(new CustomEvent('logoutUser'));
+                return reject({ data: [], error: true, message: "Token expired" });
+            }
             return reject({ data: [], error: true, message: "Error" });
         }
     });

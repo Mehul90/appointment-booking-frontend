@@ -109,7 +109,9 @@ const MainLayout = () => {
                 </header>
 
                 {/* Page content */}
-                <main className="flex-1 overflow-auto"><Outlet /></main>
+                <main className="flex-1 overflow-auto">
+                    <Outlet />
+                </main>
             </div>
         </div>
     );

@@ -75,6 +75,21 @@
   }
 }
 
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 3px solid rgba(247, 237, 237, 0.1);
+  border-top-color: rgb(255, 255, 255);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: auto; /* Optional: centers the spinner */
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
