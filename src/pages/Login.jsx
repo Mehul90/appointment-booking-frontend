@@ -1,4 +1,3 @@
-import React from "react";
 
 const Login = () => {
     return (
@@ -31,7 +30,7 @@ const Login = () => {
                         />
                     </div>
                     <button
-                        type="submit"
+                        type="button"
                         className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-lg transition-colors"
                     >
                         Login

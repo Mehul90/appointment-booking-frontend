@@ -4,6 +4,7 @@ import Calendar from "@/pages/Calendar";
 import Login from "@/pages/Login";
 import Participants from "@/pages/Participants";
 import { createBrowserRouter } from "react-router-dom";
+import ProtectedRoutes from "./ProtectedRoutes";
 
 export const AppRoutes = createBrowserRouter([
     {
@@ -12,19 +13,35 @@ export const AppRoutes = createBrowserRouter([
     },
     {
         path: "/",
-        element: <MainLayout />,
+        element: (
+            <ProtectedRoutes>
+                <MainLayout />
+            </ProtectedRoutes>
+        ),
         children: [
             {
                 path: "/Calendar",
-                element: <Calendar />,
+                element: (
+                    <ProtectedRoutes>
+                        <Calendar />
+                    </ProtectedRoutes>
+                ),
             },
             {
                 path: "/participants",
-                element: <Participants />,
+                element: (
+                    <ProtectedRoutes>
+                        <Participants />
+                    </ProtectedRoutes>
+                ),
             },
             {
                 path: "/AppointmentForm",
-                element: <AppointmentForm />,
+                element: (
+                    <ProtectedRoutes>
+                        <AppointmentForm />
+                    </ProtectedRoutes>
+                ),
             },
         ],
     },
