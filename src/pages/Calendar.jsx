@@ -13,6 +13,9 @@ import {
 import CalendarGrid from '../components/calendar/CalendarGrid'
 import AppointmentDialog from '../components/appointments/AppointmentDialog'
 import { useToast } from '@/components/ui/use-toast'
+import { useDispatch } from 'react-redux'
+import { createAppointment, deleteAppointment, getAppointments, updateAppointment } from '@/store/slices/appointmentsSlice'
+import { getAllParticipants } from '@/store/slices/participantsSlice'
 
 export default function Calendar() {
   const [appointments, setAppointments] = useState([])
@@ -27,6 +30,8 @@ export default function Calendar() {
   const [isLoading, setIsLoading] = useState(true)
   const { toast } = useToast()
 
+  const dispatch = useDispatch();
+
   useEffect(() => {
     loadData()
   }, [])
@@ -35,11 +40,20 @@ export default function Calendar() {
     setIsLoading(true)
     try {
       const [appointmentsData, participantsData] = await Promise.all([
-        Appointment.list(),
-        Participant.list(),
+        dispatch(getAppointments()),
+        dispatch(getAllParticipants()),
       ])
-      setAppointments(appointmentsData)
-      setParticipants(participantsData)
+      setAppointments(() => {
+        return appointmentsData.payload.map((appointment) => {
+          return {
+            ...appointment,
+            start_time: appointment.startTime,
+            end_time: appointment.endTime,
+            participants: appointment.participants.map((participantId) => participantId.id)
+          }
+        })
+      })
+      setParticipants(participantsData.payload)
     } catch (error) {
       console.error('Error loading data:', error)
       toast({
@@ -77,21 +91,47 @@ export default function Calendar() {
   const handleSaveAppointment = async (appointmentData) => {
     try {
       if (isNewAppointment) {
-        await Appointment.create(appointmentData)
-        toast({
-          title: 'Success',
-          description: 'Appointment created successfully',
+        // await Appointment.create(appointmentData)
+
+        dispatch(createAppointment(appointmentData)).then((response) => {
+          toast({
+            title: 'Success',
+            description: 'Appointment created successfully',
+          })
+
+          setIsAppointmentDialogOpen(false)
+          loadData()
+          
+        }).catch(() => {
+          toast({
+            title: 'Error',
+            description: 'Failed to create appointment. Please try again.',
+          })
+
+          setIsAppointmentDialogOpen(false)
+          loadData()
+          
         })
+
       } else {
-        await Appointment.update(currentAppointment.id, appointmentData)
-        toast({
-          title: 'Success',
-          description: 'Appointment updated successfully',
+        // await Appointment.update(currentAppointment.id, appointmentData)
+        dispatch(updateAppointment({ id: currentAppointment.id, data: appointmentData })).then(() => {
+          setIsAppointmentDialogOpen(false)
+          loadData()
+          toast({
+            title: 'Success',
+            description: 'Appointment updated successfully',
+          })
+        }).catch(() => {
+          toast({
+            title: 'Error',
+            description: 'Failed to update appointment. Please try again.',
+          })
+          setIsAppointmentDialogOpen(false)
         })
       }
 
-      setIsAppointmentDialogOpen(false)
-      loadData()
+      
     } catch (error) {
       console.error('Error saving appointment:', error)
       toast({
@@ -105,13 +145,23 @@ export default function Calendar() {
   const handleDeleteAppointment = async (appointmentId) => {
     if (confirm('Are you sure you want to delete this appointment?')) {
       try {
-        await Appointment.delete(appointmentId)
-        setIsAppointmentDialogOpen(false)
-        loadData()
-        toast({
-          title: 'Success',
-          description: 'Appointment deleted successfully',
+        // await Appointment.delete(appointmentId)
+
+        dispatch(deleteAppointment(appointmentId)).then(() => {
+          setIsAppointmentDialogOpen(false)
+          loadData()
+          toast({
+            title: 'Success',
+            description: 'Appointment deleted successfully',
+          })
+        }).catch(() => {
+          toast({
+          title: 'Error',
+          description: 'Failed to delete appointment. Please try again.',
+          variant: 'destructive',
         })
+        })
+
       } catch (error) {
         console.error('Error deleting appointment:', error)
         toast({

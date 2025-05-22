@@ -24,6 +24,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { useDispatch } from 'react-redux';
 import { createParticipants, deleteParticipants, getAllParticipants, updateParticipants } from '@/store/slices/participantsSlice';
+import { getAppointments } from '@/store/slices/appointmentsSlice';
 
 export default function Participants() {
   const [participants, setParticipants] = useState([]);
@@ -47,10 +48,19 @@ export default function Participants() {
     try {
       const [participantsData, appointmentsData] = await Promise.all([
         dispatch(getAllParticipants()),
-        Appointment.list()
+        dispatch(getAppointments()),
       ]);
       setParticipants(participantsData.payload);
-      setAppointments(appointmentsData); 
+      setAppointments(() => {
+        return appointmentsData.payload.map((appointment) => {
+          return {
+            ...appointment,
+            start_time: appointment.startTime,
+            end_time: appointment.endTime,
+            participants: appointment.participants.map((participantId) => participantId.id)
+          }
+        })
+      })
 
     } catch (error) {
       console.error('Error loading data:', error);

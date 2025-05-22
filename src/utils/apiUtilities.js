@@ -3,10 +3,17 @@ import { envSettings } from "./env.config";
 const { apiURL } = envSettings;
 
 export const apiEndPoints = {
+    // Participants endpoints
     createParticipants: "/api/participants/create",
     getParticipants: "/api/participants/list",
     updateParticipants: (participantId) =>  `/api/participants/update/${participantId}`,
     deleteParticipants: (participantId) => `/api/participants/delete/${participantId}`,
+
+    // Appointments endpoints
+    createAppointment: "/api/appointments/create",
+    getAppointments: "/api/appointments/list",
+    updateAppointment: (appointmentId) => `/api/appointments/update/${appointmentId}`,
+    deleteAppointment: (appointmentId) => `/api/appointments/delete/${appointmentId}`,
 };
 
 
@@ -29,6 +36,7 @@ export async function mastersAPICall({ endPoint, method, params }) {
                 headers: {
                     "Content-Type": "application/json",
                     Accept: "application/json",
+                    "Authorization": `Bearer ${localStorage.getItem("token")}`,
                     'ngrok-skip-browser-warning': true
                 },
             };

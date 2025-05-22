@@ -32,7 +32,7 @@ export const getAllParticipants = createAsyncThunk(
 
 export const deleteParticipants = createAsyncThunk(
     "participants/deleteParticipants",
-    async (data, { rejectWithValue, dispatch  }) => {
+    async (data, { rejectWithValue, dispatch, fulfillWithValue  }) => {
         try {
             const response = await mastersAPICall({ endPoint: apiEndPoints.deleteParticipants(data), method: APIMethods.DELETE  })
 
