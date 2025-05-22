@@ -35,8 +35,6 @@ export default function ParticipantForm({
     name: '',
     email: '',
     phone: '',
-    department: '',
-    avatar_color: AVATAR_COLORS[0],
   })
   const [errors, setErrors] = useState({})
 
@@ -45,10 +43,7 @@ export default function ParticipantForm({
       setFormData({
         name: '',
         email: '',
-        phone: '',
-        department: '',
-        avatar_color:
-          AVATAR_COLORS[Math.floor(Math.random() * AVATAR_COLORS.length)],
+        phone: ''
       })
     } else if (participant) {
       setFormData({ ...participant })
@@ -143,7 +138,7 @@ export default function ParticipantForm({
             />
           </div>
 
-          <div className='grid gap-2'>
+          {/* <div className='grid gap-2'>
             <Label htmlFor='department'>Department (Optional)</Label>
             <Input
               id='department'
@@ -151,9 +146,9 @@ export default function ParticipantForm({
               onChange={(e) => handleInputChange('department', e.target.value)}
               placeholder='Marketing, Engineering, etc.'
             />
-          </div>
+          </div> */}
 
-          <div className='grid gap-2'>
+          {/* <div className='grid gap-2'>
             <Label>Avatar Color</Label>
             <div className='flex flex-wrap gap-2'>
               {AVATAR_COLORS.map((color) => (
@@ -169,7 +164,7 @@ export default function ParticipantForm({
                 />
               ))}
             </div>
-          </div>
+          </div> */}
         </div>
 
         <DialogFooter className='flex gap-2'>

@@ -22,6 +22,8 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
+import { useDispatch } from 'react-redux';
+import { createParticipants } from '@/store/slices/participantsSlice';
 
 export default function Participants() {
   const [participants, setParticipants] = useState([]);
@@ -33,6 +35,8 @@ export default function Participants() {
   const [searchQuery, setSearchQuery] = useState('');
   const [departmentFilter, setDepartmentFilter] = useState('all');
   const [sortBy, setSortBy] = useState('name_asc');
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     loadData();
@@ -68,13 +72,17 @@ export default function Participants() {
   const handleSaveParticipant = async (participantData) => {
     try {
       if (isNewParticipant) {
-        await Participant.create(participantData);
+        dispatch(createParticipants(participantData)).then(() => {
+          setIsFormOpen(false);
+          loadData();
+        }).catch((error) => {
+          setIsFormOpen(false);
+          loadData();
+        });
       } else {
         await Participant.update(currentParticipant.id, participantData);
       }
       
-      setIsFormOpen(false);
-      loadData();
     } catch (error) {
       console.error('Error saving participant:', error);
     }
