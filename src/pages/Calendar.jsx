@@ -165,16 +165,6 @@ export default function Calendar() {
           </div>
 
           <div className='flex flex-col sm:flex-row gap-3 w-full sm:w-auto'>
-            <div className='relative flex-1 sm:w-64'>
-              <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4' />
-              <Input
-                placeholder='Search appointments...'
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className='pl-10'
-              />
-            </div>
-
             <Button
               className='bg-indigo-600 hover:bg-indigo-700 w-full sm:w-auto'
               onClick={handleCreateAppointment}

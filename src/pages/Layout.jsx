@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import { createPageUrl } from '@/utils'
-import { Calendar, Users, Menu, X, Clock, PlusCircle } from 'lucide-react'
+import { Calendar, Users, Menu, X, Clock, PlusCircle, CalendarDays } from 'lucide-react'
 
 export default function Layout({ children, currentPageName }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
@@ -39,7 +39,7 @@ export default function Layout({ children, currentPageName }) {
               to={createPageUrl('Calendar')}
               className='flex items-center space-x-2'
             >
-              <Clock className='h-6 w-6 text-indigo-600' />
+              <CalendarDays className='h-6 w-6 text-indigo-600' />
               <span className='text-[17px] font-semibold text-gray-900'>
                 Appointment Builder
               </span>
