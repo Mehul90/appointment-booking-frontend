@@ -4,6 +4,8 @@ import Pages from '@/pages/index.jsx'
 import { Toaster } from '@/components/ui/toaster'
 import { RouterProvider } from 'react-router-dom'
 import { AppRoutes } from './routes'
+import { Provider } from 'react-redux'
+import { store } from './store'
 
 class ErrorBoundary extends React.Component {
   constructor(props) {
@@ -48,9 +50,11 @@ function App() {
   return (
     <React.StrictMode>
       <ErrorBoundary>
-        <div className='min-h-screen bg-background'> 
-          <RouterProvider router={AppRoutes} />
-          <Toaster />
+        <div className='min-h-screen bg-background'>
+          <Provider store={store}>
+            <RouterProvider router={AppRoutes} />
+            <Toaster />
+          </Provider>
         </div>
       </ErrorBoundary>
     </React.StrictMode>
