@@ -28,4 +28,4 @@ export const participantsSlice = createSlice({
     },
 });
 
-export default participantsSlice.reducer;
+export default participantsSlice;

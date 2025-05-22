@@ -3,6 +3,6 @@ import { participantsSlice } from './slices/participantsSlice';
 
 export const store = configureStore({
 	reducer: {
-		participantsSlice: participantsSlice
+		participants: participantsSlice.reducer,
 	},
 })
