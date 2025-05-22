@@ -2,6 +2,8 @@ import React from 'react'
 import './App.css'
 import Pages from '@/pages/index.jsx'
 import { Toaster } from '@/components/ui/toaster'
+import { RouterProvider } from 'react-router-dom'
+import { AppRoutes } from './routes'
 
 class ErrorBoundary extends React.Component {
   constructor(props) {
@@ -46,8 +48,8 @@ function App() {
   return (
     <React.StrictMode>
       <ErrorBoundary>
-        <div className='min-h-screen bg-background'>
-          <Pages />
+        <div className='min-h-screen bg-background'> 
+          <RouterProvider router={AppRoutes} />
           <Toaster />
         </div>
       </ErrorBoundary>
