@@ -43,9 +43,6 @@ export default function ParticipantCard({
               </Avatar>
               <div>
                 <h3 className="text-lg font-medium">{participant.name}</h3>
-                <p className="text-sm text-gray-500">
-                  {participant.department ? participant.department : 'No department'}
-                </p>
               </div>
             </div>
             
