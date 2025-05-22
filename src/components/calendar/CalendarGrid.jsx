@@ -72,7 +72,7 @@ export default function CalendarGrid({
   });
 
   const getParticipantById = (id) => {
-    return participants.find(p => p.id === id) || { name: 'Unknown', avatar_color: '#ccc' };
+    return participants.find(p => p.id === id) || { name: 'Unknown', color: '#ccc' };
   };
 
   return (

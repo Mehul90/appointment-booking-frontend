@@ -64,7 +64,7 @@ export default function TimeSlot({
                     return (
                       <Avatar key={participantId} className="h-6 w-6 border-2 border-white">
                         <AvatarFallback 
-                          style={{ backgroundColor: participant.avatar_color }}
+                          style={{ backgroundColor: participant.color }}
                           className="text-[10px] text-white"
                         >
                           {getParticipantInitials(participant)}

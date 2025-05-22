@@ -526,7 +526,7 @@ export default function AppointmentDialog({
                   >
                     <Avatar className='h-5 w-5'>
                       <AvatarFallback
-                        style={{ backgroundColor: participant.avatar_color }}
+                        style={{ backgroundColor: participant.color }}
                         className='text-[10px] text-white'
                       >
                         {participant.name

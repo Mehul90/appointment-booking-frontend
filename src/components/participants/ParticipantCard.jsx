@@ -35,7 +35,7 @@ export default function ParticipantCard({
             <div className="flex items-center space-x-3">
               <Avatar className="h-12 w-12">
                 <AvatarFallback 
-                  style={{ backgroundColor: participant.avatar_color }}
+                  style={{ backgroundColor: participant.color }}
                   className="text-white text-lg font-medium"
                 >
                   {getInitials(participant.name)}
