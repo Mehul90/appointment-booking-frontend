@@ -14,8 +14,9 @@ import CalendarGrid from '../components/calendar/CalendarGrid'
 import AppointmentDialog from '../components/appointments/AppointmentDialog'
 import { useToast } from '@/components/ui/use-toast'
 import { useDispatch, useSelector } from 'react-redux'
-import { createAppointment, deleteAppointment, getAppointments, updateAppointment } from '@/store/slices/appointmentsSlice'
+import { createAppointment, deleteAppointment, getAppointments, resetSeeMoreAppointments, updateAppointment } from '@/store/slices/appointmentsSlice'
 import { getAllParticipants } from '@/store/slices/participantsSlice'
+import SeeMore from '@/components/calendar/SeeMore'
 
 export default function Calendar() {
   const [appointments, setAppointments] = useState([])
@@ -32,7 +33,7 @@ export default function Calendar() {
 
   const dispatch = useDispatch();
 
-  const { appointmentsList } = useSelector(
+  const { appointmentsList, isSeeMoreAppointments } = useSelector(
     (state) => state.appointments
   )
   const { participantsList } = useSelector(
@@ -260,6 +261,13 @@ export default function Calendar() {
         selectedDate={selectedDate}
         selectedTime={selectedTime}
       />
+
+      <SeeMore 
+        isOpen={isSeeMoreAppointments}
+        onClose={() => dispatch(resetSeeMoreAppointments())}
+        onAppointmentClick={handleAppointmentClick}
+      />
+
     </div>
   )
 }
