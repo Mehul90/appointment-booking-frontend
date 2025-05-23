@@ -97,6 +97,7 @@ const Login = () => {
                             className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
+                            onBlur={validateForm}
                         />
                         {errors.email && (
                             <p className="text-red-500 text-sm mt-1">{errors.email}</p>
@@ -117,6 +118,7 @@ const Login = () => {
                             className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
+                            onBlur={validateForm}
                         />
                         {errors.password && (
                             <p className="text-red-500 text-sm mt-1">{errors.password}</p>
