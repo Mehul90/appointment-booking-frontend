@@ -1,47 +1,50 @@
-# AppointMate
+# Appointment Booking Frontend
 
-A modern appointment scheduling application built with React and Vite.
+This is the frontend application for the Appointment Booking system. It provides a user interface for booking appointments and managing participants, and connects to the Symfony-based backend API.
 
-## Getting Started
+## 🛠️ Built With
 
-1. Clone the repository
-2. Install dependencies:
+- [React](https://reactjs.org/) (version 18)
+- JavaScript
+- HTML/CSS (Tailwind)
+- Axios(for backend communication)
 
+## 📦 Features
+
+- Create new appointments
+- Add participants to appointments
+- Fetch and display appointments and participants
+- Prevent double-booking for the same participant
+
+## 🚀 Getting Started
+
+These instructions will get the frontend running on your local development machine.
+
+### Prerequisites
+
+- Node.js (v18.19.1)
+- npm
+- Git
+
+### Installation
+
+### Clone the repository
+```bash
+git clone https://github.com/Mehul90/appointment-booking-frontend.git
+cd appointment-booking-frontend
+```
+
+### Install dependencies
 ```bash
 npm install
 ```
 
-3. Start the development server:
+### Configure environment variables
+```bash
+VITE_API_BASE_URL=http://localhost:8000
+```
 
+### Start the development server:
 ```bash
 npm run dev
 ```
-
-## Features
-
-- Modern appointment scheduling interface
-- Calendar integration
-- Participant management
-- Email notifications
-- File upload capabilities
-- Image generation
-- Data extraction from uploaded files
-
-## Development
-
-This is a Vite + React application that uses:
-
-- React for UI components
-- Tailwind CSS for styling
-- React Router for navigation
-- Various Radix UI components for accessible UI elements
-
-## Building for Production
-
-```bash
-npm run build
-```
-
-## License
-
-MIT
