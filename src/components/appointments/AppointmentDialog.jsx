@@ -600,7 +600,7 @@ export default function AppointmentDialog({
                       <Button variant="outline" onClick={onClose}>
                           Cancel
                       </Button>
-                      <Button onClick={handleSubmit} className="w-[165px]">
+                      <Button onClick={handleSubmit} disabled={conflicts.length} className="w-[165px]">
                           {appointmentInProgress ? (
                               <Loader />
                           ) : isNew ? (
