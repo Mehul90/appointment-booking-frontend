@@ -96,7 +96,7 @@ export const updateParticipants = createAsyncThunk(
 
             return fulfillWithValue(response.data);
         } catch (error) {
-            return rejectWithValue(error.message);
+            return rejectWithValue(error);
         }
     }
 );
@@ -129,6 +129,16 @@ export const participantsSlice = createSlice({
                 state.isLoading = false;
             })
             .addCase(createParticipants.rejected, (state, action) => {
+                state.isLoading = false;
+            })
+            .addCase(updateParticipants.pending, (state) => {
+                state.isLoading = true;
+            }
+            )
+            .addCase(updateParticipants.fulfilled, (state, action) => {
+                state.isLoading = false;
+            })
+            .addCase(updateParticipants.rejected, (state, action) => {
                 state.isLoading = false;
             })
     },

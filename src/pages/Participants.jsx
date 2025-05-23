@@ -113,9 +113,16 @@ export default function Participants() {
         });
       } else {
         // await Participant.update(currentParticipant.id, participantData);
-        dispatch(updateParticipants({id: currentParticipant.id, participantData})).then(() => {
+        dispatch(updateParticipants({id: currentParticipant.id, participantData})).then((response) => {
           setIsFormOpen(false);
           // loadData();
+          if(response.payload.error) {
+            toast({
+              title: 'Error',
+              description: response.payload.message,
+              variant: 'destructive',
+          })
+          }
         })
       }
       
