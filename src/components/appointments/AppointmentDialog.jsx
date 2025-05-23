@@ -43,9 +43,9 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { useSelector } from 'react-redux'
 import Loader from '../ui/loader'
 
-const TIME_OPTIONS = Array.from({ length: 13 * 4 }, (_, i) => {
-  const hour = Math.floor(i / 4) + 7 // Start from 7 AM
-  const minute = (i % 4) * 15
+const TIME_OPTIONS = Array.from({ length: 25 }, (_, i) => {
+  const hour = Math.floor(i / 2) + 7 // Start from 7 AM
+  const minute = (i % 2) * 30
   return `${hour.toString().padStart(2, '0')}:${minute
     .toString()
     .padStart(2, '0')}`
@@ -334,6 +334,7 @@ export default function AppointmentDialog({
                     selected={formData.date}
                     onSelect={(date) => handleInputChange('date', date)}
                     initialFocus
+                    disabled={(date) => date < new Date(new Date().setHours(0,0,0,0))}
                   />
                 </PopoverContent>
               </Popover>

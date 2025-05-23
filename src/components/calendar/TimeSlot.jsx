@@ -44,7 +44,7 @@ export default function TimeSlot({
       >
           {appointments.slice(0,1).map((appointment) => {
               // Only render the visual card for an appointment if this time slot is its start_time.
-              if (appointment.start_time === time) {
+              if (time.includes(appointment.start_time)) {
                   return (
                       <div
                           key={appointment.id}
@@ -91,9 +91,10 @@ export default function TimeSlot({
                       </div>
                   );
               }
+              
               return null; // If this isn't the start_time slot for this appointment, don't render its card here.
           })}
-          {appointments.length > 1 && appointments[0].start_time === time && (
+          {appointments.length > 1 && time.includes(appointments[0].start_time) && (
               <button
                   className="absolute bottom-0 right-0 text-xs text-blue-600 hover:text-blue-800 font-medium"
                   onClick={(e) => {

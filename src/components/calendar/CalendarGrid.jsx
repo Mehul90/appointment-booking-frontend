@@ -32,41 +32,47 @@ export default function CalendarGrid({
   const days = eachDayOfInterval({ start: startDate, end: endDate });
 
   // Group appointments by day and time
+  // Map each day to its time slots, and for each slot, filter only appointments that start within that slot
   const appointmentsByDayAndTime = days.map(day => {
+    // Group TIME_SLOTS into chunks of 5
+    const chunkedTimeSlots = [];
+    for (let i = 0; i < TIME_SLOTS.length; i += 5) {
+      chunkedTimeSlots.push(TIME_SLOTS.slice(i, i + 5));
+    }
+
     return {
       date: day,
-      timeSlots: TIME_SLOTS.map(timeSlot => {
-        const [hours, minutes] = timeSlot.split(':');
-        const slotStartDateTime = new Date(day);
-        slotStartDateTime.setHours(parseInt(hours, 10), parseInt(minutes, 10), 0, 0);
-        const slotEndDateTime = addMinutes(slotStartDateTime, 30);
-        
-        // Find appointments that overlap with this time slot
-        const overlappingAppointments = appointments.filter(appointment => {
-          const appointmentDate = parseISO(appointment.date);
-          
-          if (!isSameDay(appointmentDate, day)) return false;
-          
-          const [startHour, startMinute] = appointment.start_time.split(':');
-          const [endHour, endMinute] = appointment.end_time.split(':');
-          
-          const appointmentStart = new Date(appointmentDate);
-          appointmentStart.setHours(parseInt(startHour, 10), parseInt(startMinute, 10), 0, 0);
-          
-          const appointmentEnd = new Date(appointmentDate);
-          appointmentEnd.setHours(parseInt(endHour, 10), parseInt(endMinute, 10), 0, 0);
-          
-          // Corrected overlap condition:
-          // An appointment overlaps with the current time slot if:
-          // The appointment starts before the slot ends, AND
-          // The appointment ends after the slot starts.
-          return appointmentStart < slotEndDateTime && appointmentEnd > slotStartDateTime;
-        });
+      timeSlots: chunkedTimeSlots.map((slotGroup) => {
+      // slotGroup is an array of 5 time strings
+      const slotStart = slotGroup[0];
+      const slotEnd = slotGroup[slotGroup.length - 1];
 
-        return {
-          time: timeSlot,
-          appointments: overlappingAppointments
-        };
+      // Calculate start and end Date objects for the slot group
+      const [startHour, startMinute] = slotStart.split(':');
+      const slotGroupStartDateTime = new Date(day);
+      slotGroupStartDateTime.setHours(parseInt(startHour, 10), parseInt(startMinute, 10), 0, 0);
+
+      const [endHour, endMinute] = slotEnd.split(':');
+      const slotGroupEndDateTime = new Date(day);
+      // Each slot is 30 min, so add 30 min to the last slot's end
+      slotGroupEndDateTime.setHours(parseInt(endHour, 10), parseInt(endMinute, 10) + 30, 0, 0);
+
+      // Merge appointments that start within this slot group
+      const relevantAppointments = appointments.filter(appointment => {
+        const appointmentDate = parseISO(appointment.date);
+        if (!isSameDay(appointmentDate, day)) return false;
+
+        const [appHour, appMinute] = appointment.start_time.split(':');
+        const appointmentStart = new Date(appointmentDate);
+        appointmentStart.setHours(parseInt(appHour, 10), parseInt(appMinute, 10), 0, 0);
+
+        return appointmentStart >= slotGroupStartDateTime && appointmentStart < slotGroupEndDateTime;
+      });
+
+      return {
+        timeSlots: slotGroup, // array of 5 time strings
+        appointments: relevantAppointments
+      };
       })
     };
   });
@@ -154,7 +160,7 @@ export default function CalendarGrid({
               <TimeSlot
                 key={`${format(dayData.date, 'yyyy-MM-dd')}-${slot.time}`}
                 date={dayData.date}
-                time={slot.time}
+                time={slot.timeSlots}
                 appointments={slot.appointments}
                 getParticipantById={getParticipantById}
                 onAppointmentClick={onAppointmentClick}
