@@ -1,5 +1,6 @@
 import axios from "axios";
 import { envSettings } from "./env.config";
+import { userLogout } from ".";
 const { apiURL } = envSettings;
 
 export const apiEndPoints = {
@@ -63,7 +64,7 @@ export async function mastersAPICall({ endPoint, method, params }) {
         } catch (error) {
             // if token is expired, remove the token and redirect to login page
             if(error.status === 401) {
-                document.dispatchEvent(new CustomEvent('logoutUser'));
+                userLogout();
                 return reject({ data: [], error: true, message: "Token expired" });
             }
             return reject({ data: [], error: true, message: "Error" });

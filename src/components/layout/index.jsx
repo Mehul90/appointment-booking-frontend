@@ -1,5 +1,5 @@
-import { createPageUrl } from "@/utils";
-import { Calendar, CalendarDays, Menu, PlusCircle, Users, X } from "lucide-react";
+import { createPageUrl, userLogout } from "@/utils";
+import { Calendar, CalendarDays, LogOut, Menu, PlusCircle, Users, X } from "lucide-react";
 import { useState } from "react";
 import { Link, Navigate, Outlet, useLocation } from "react-router-dom";
 
@@ -92,8 +92,21 @@ const MainLayout = () => {
 
                     <div className="mt-auto border-t">
                         <div className="px-4 py-4">
-                            <div className="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-gray-100 cursor-pointer"></div>
-                            <div className="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-gray-100 cursor-pointer"></div>
+                            <div className="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-gray-100 cursor-pointer">
+                                <Link
+                                    type=""
+                                    // to={createPageUrl(item.path)}
+                                    className="flex items-center px-4 py-3 rounded-lg transition-colors bg-indigo-50 text-indigo-700"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        userLogout()
+                                    }}
+                                >
+                                    <LogOut/>
+                                    <span className="font-medium">Logout</span>
+                                </Link>
+                            </div>
+                            {/* <div className="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-gray-100 cursor-pointer"></div> */}
                         </div>
                     </div>
                 </div>

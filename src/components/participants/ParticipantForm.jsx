@@ -11,6 +11,8 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Trash } from 'lucide-react'
+import { useSelector } from 'react-redux'
+import Loader from '../ui/loader'
 
 const AVATAR_COLORS = [
   '#6366f1', // Indigo
@@ -38,6 +40,10 @@ export default function ParticipantForm({
     color: AVATAR_COLORS[0],
   })
   const [errors, setErrors] = useState({})
+
+  const { isLoading: participantInProgress } = useSelector(
+    (state) => state.participants
+  )
 
   useEffect(() => {
     if (isNew) {
@@ -185,8 +191,8 @@ export default function ParticipantForm({
           <Button variant='outline' onClick={onClose}>
             Cancel
           </Button>
-          <Button onClick={handleSubmit}>
-            {isNew ? 'Add Participant' : 'Save Changes'}
+          <Button onClick={handleSubmit} className="w-[132px]">
+            { participantInProgress ? <Loader /> :  isNew ? 'Add Participant' : 'Save Changes'}
           </Button>
         </DialogFooter>
       </DialogContent>

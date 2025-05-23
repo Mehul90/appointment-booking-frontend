@@ -13,7 +13,7 @@ import {
 import CalendarGrid from '../components/calendar/CalendarGrid'
 import AppointmentDialog from '../components/appointments/AppointmentDialog'
 import { useToast } from '@/components/ui/use-toast'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { createAppointment, deleteAppointment, getAppointments, updateAppointment } from '@/store/slices/appointmentsSlice'
 import { getAllParticipants } from '@/store/slices/participantsSlice'
 
@@ -32,28 +32,42 @@ export default function Calendar() {
 
   const dispatch = useDispatch();
 
+  const { appointmentsList } = useSelector(
+    (state) => state.appointments
+  )
+  const { participantsList } = useSelector(
+    (state) => state.participants
+  )
+
   useEffect(() => {
     loadData()
   }, [])
 
+
+  useEffect(() => {
+      setAppointments(() => {
+          return appointmentsList.map((appointment) => {
+              return {
+                  ...appointment,
+                  start_time: appointment.startTime,
+                  end_time: appointment.endTime,
+                  participants: appointment.participants.map((participantId) => participantId.id),
+              };
+          });
+      });
+  }, [appointmentsList]);
+
+  useEffect(() => {
+      setParticipants(participantsList);
+  }, [participantsList]);
+
   const loadData = async () => {
     setIsLoading(true)
     try {
-      const [appointmentsData, participantsData] = await Promise.all([
+      await Promise.all([
         dispatch(getAppointments()),
         dispatch(getAllParticipants()),
       ])
-      setAppointments(() => {
-        return appointmentsData.payload.map((appointment) => {
-          return {
-            ...appointment,
-            start_time: appointment.startTime,
-            end_time: appointment.endTime,
-            participants: appointment.participants.map((participantId) => participantId.id)
-          }
-        })
-      })
-      setParticipants(participantsData.payload)
     } catch (error) {
       console.error('Error loading data:', error)
       toast({
@@ -100,7 +114,6 @@ export default function Calendar() {
           })
 
           setIsAppointmentDialogOpen(false)
-          loadData()
           
         }).catch(() => {
           toast({
@@ -109,7 +122,6 @@ export default function Calendar() {
           })
 
           setIsAppointmentDialogOpen(false)
-          loadData()
           
         })
 
@@ -117,7 +129,6 @@ export default function Calendar() {
         // await Appointment.update(currentAppointment.id, appointmentData)
         dispatch(updateAppointment({ id: currentAppointment.id, data: appointmentData })).then(() => {
           setIsAppointmentDialogOpen(false)
-          loadData()
           toast({
             title: 'Success',
             description: 'Appointment updated successfully',
@@ -149,7 +160,7 @@ export default function Calendar() {
 
         dispatch(deleteAppointment(appointmentId)).then(() => {
           setIsAppointmentDialogOpen(false)
-          loadData()
+          // loadData()
           toast({
             title: 'Success',
             description: 'Appointment deleted successfully',

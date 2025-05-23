@@ -1,10 +1,6 @@
 import { apiEndPoints, APIMethods, mastersAPICall } from "@/utils/apiUtilities";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
-const initialState = {
-    participantsList: [],
-};
-
 /**
  * Async thunk to create participants.
  *
@@ -17,11 +13,12 @@ const initialState = {
  */
 export const createParticipants = createAsyncThunk(
     "participants/createParticipants",
-    async (data, { rejectWithValue }) => {
+    async (data, { rejectWithValue, dispatch }) => {
         try {
             
             const response = await mastersAPICall({ endPoint: apiEndPoints.createParticipants, method: APIMethods.POST, params: data  })
-            return "Success";
+            dispatch(getAllParticipants());
+            return fulfillWithValue(response.data);
         } catch (error) {
             return rejectWithValue(error.message);
         }
@@ -68,6 +65,8 @@ export const deleteParticipants = createAsyncThunk(
         try {
             const response = await mastersAPICall({ endPoint: apiEndPoints.deleteParticipants(data), method: APIMethods.DELETE  })
 
+            dispatch(getAllParticipants());
+
             return fulfillWithValue(response.data);
         } catch (error) {
             return rejectWithValue(error.message);
@@ -89,9 +88,11 @@ export const deleteParticipants = createAsyncThunk(
  */
 export const updateParticipants = createAsyncThunk(
     "participants/updateParticipants",
-    async (data, { rejectWithValue, fulfillWithValue }) => {
+    async (data, { rejectWithValue, fulfillWithValue, dispatch }) => {
         try {
             const response = await mastersAPICall({ endPoint: apiEndPoints.updateParticipants(data.id), method: APIMethods.PUT, params: data.participantData  })
+
+            dispatch(getAllParticipants());
 
             return fulfillWithValue(response.data);
         } catch (error) {
@@ -102,35 +103,34 @@ export const updateParticipants = createAsyncThunk(
 
 export const participantsSlice = createSlice({
     name: "participants",
-    initialState,
+    initialState: {
+        isLoading: false,
+        participantsList: [],
+    },
     reducers: {},
     extraReducers: (builder) => {
         builder
-            .addCase(createParticipants.fulfilled, (state, action) => {
-                state.todos = action.payload;
-                console.log("Fulfiled");
-                // set the state with the response data
-                state.participantsList = [...state.participantsList, action.payload];
-            })
-            .addCase(createParticipants.rejected, (state, action) => {
-                console.log("Rejected");
-                state.participantsList = action.payload;
-            })
-            .addCase(createParticipants.pending, (state, action) => {
-                console.log("Pending");
+            .addCase(getAllParticipants.pending, (state) => {
+                state.isLoading = true;
+                state.participantsList = [...state.participantsList];
             })
             .addCase(getAllParticipants.fulfilled, (state, action) => {
-                state.participantsList = [...state.participantsList, ...action.payload];
-                console.log("Fulfiled");
-                // set the state with the response data
+                state.isLoading = false;
+                state.participantsList = [...action.payload.data];
             })
             .addCase(getAllParticipants.rejected, (state, action) => {
+                state.isLoading = false;
                 state.participantsList = [...state.participantsList];
-                state.participantsList = action.payload;
             })
-            .addCase(getAllParticipants.pending, (state, action) => {
-                state.participantsList = [...state.participantsList];
-            });
+            .addCase(createParticipants.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(createParticipants.fulfilled, (state, action) => {
+                state.isLoading = false;
+            })
+            .addCase(createParticipants.rejected, (state, action) => {
+                state.isLoading = false;
+            })
     },
 });
 

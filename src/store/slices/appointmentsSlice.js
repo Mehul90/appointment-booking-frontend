@@ -14,9 +14,11 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
  */
 export const createAppointment = createAsyncThunk(
     "appointments/createAppointment",
-    async (data, { rejectWithValue,  fulfillWithValue }) => {
+    async (data, { rejectWithValue,  fulfillWithValue, dispatch }) => {
         try {
             const response = await mastersAPICall({ endPoint: apiEndPoints.createAppointment, method: APIMethods.POST, params: data })
+
+            dispatch(getAppointments());
 
             return fulfillWithValue(response.data);
         } catch (error) {
@@ -34,9 +36,9 @@ export const createAppointment = createAsyncThunk(
  */
 export const getAppointments = createAsyncThunk(
     "appointments/getAppointments",
-    async (data, { rejectWithValue,  fulfillWithValue }) => {
+    async (_, { rejectWithValue,  fulfillWithValue }) => {
         try {
-            const response = await mastersAPICall({ endPoint: apiEndPoints.getAppointments, method: APIMethods.GET, params: data })
+            const response = await mastersAPICall({ endPoint: apiEndPoints.getAppointments, method: APIMethods.GET })
 
             return fulfillWithValue(response.data);
         } catch (error) {
@@ -58,9 +60,11 @@ export const getAppointments = createAsyncThunk(
  */
 export const updateAppointment = createAsyncThunk(
     "appointments/updateAppointment",
-    async (data, { rejectWithValue,  fulfillWithValue }) => {
+    async (data, { rejectWithValue,  fulfillWithValue, dispatch }) => {
         try {
             const response = await mastersAPICall({ endPoint: apiEndPoints.updateAppointment(data.id), method: APIMethods.PUT, params: data.data })
+
+            dispatch(getAppointments());
 
             return fulfillWithValue(response.data);
         } catch (error) {
@@ -81,9 +85,11 @@ export const updateAppointment = createAsyncThunk(
  */
 export const deleteAppointment = createAsyncThunk(
     "appointments/deleteAppointment",
-    async (data, { rejectWithValue,  fulfillWithValue }) => {
+    async (data, { rejectWithValue,  fulfillWithValue, dispatch }) => {
         try {
             const response = await mastersAPICall({ endPoint: apiEndPoints.deleteAppointment(data), method: APIMethods.DELETE })
+
+            dispatch(getAppointments())
 
             return fulfillWithValue(response.data);
         } catch (error) {
@@ -106,9 +112,35 @@ export const deleteAppointment = createAsyncThunk(
  */
 export const appointmentsSlice = createSlice({
     name: "appointments",
-    initialState: {},
+    initialState: {
+        isLoading: false,
+        appointmentsList: [],
+    },
     reducers: {},
-    extraReducers: (builder) => {}
+    extraReducers: (builder) => {
+        builder
+            .addCase(createAppointment.pending, (state) => {
+                state.isLoading = true;
+                state.appointmentsList = [...state.appointmentsList];
+            })
+            .addCase(createAppointment.fulfilled, (state, action) => {
+                state.isLoading = false;
+                state.appointmentsList = [...state.appointmentsList, action.payload.data];
+            })
+            .addCase(createAppointment.rejected, (state, action) => {
+                state.isLoading = false;
+                state.appointmentsList = [...state.appointmentsList];
+            })
+            .addCase(getAppointments.pending, (state) => {
+                state.appointmentsList = [...state.appointmentsList];
+            })
+            .addCase(getAppointments.fulfilled, (state, action) => {
+                state.appointmentsList = [...action.payload.data];
+            })
+            .addCase(getAppointments.rejected, (state, action) => {
+                state.appointmentsList = [...state.appointmentsList];
+            })
+    }
 })
 
 

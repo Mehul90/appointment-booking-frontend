@@ -40,6 +40,8 @@ import {
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { useSelector } from 'react-redux'
+import Loader from '../ui/loader'
 
 const TIME_OPTIONS = Array.from({ length: 13 * 4 }, (_, i) => {
   const hour = Math.floor(i / 4) + 7 // Start from 7 AM
@@ -84,6 +86,10 @@ export default function AppointmentDialog({
   })
   const [errors, setErrors] = useState({})
   const [conflicts, setConflicts] = useState([])
+
+  const { isLoading: appointmentInProgress } = useSelector(
+    (state) => state.appointments
+  )
 
   useEffect(() => {
     if (isNew) {
@@ -592,8 +598,8 @@ export default function AppointmentDialog({
           <Button variant='outline' onClick={onClose}>
             Cancel
           </Button>
-          <Button onClick={handleSubmit}>
-            {isNew ? 'Create Appointment' : 'Save Changes'}
+          <Button onClick={handleSubmit} className="w-[165px]" >
+            { appointmentInProgress ? <Loader /> : isNew ? 'Create Appointment' : 'Save Changes' }
           </Button>
         </DialogFooter>
       </DialogContent>

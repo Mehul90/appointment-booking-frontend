@@ -22,7 +22,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { createParticipants, deleteParticipants, getAllParticipants, updateParticipants } from '@/store/slices/participantsSlice';
 import { getAppointments } from '@/store/slices/appointmentsSlice';
 
@@ -39,28 +39,41 @@ export default function Participants() {
 
   const dispatch = useDispatch();
 
+  const { appointmentsList } = useSelector(
+    (state) => state.appointments
+  )
+  const { participantsList } = useSelector(
+    (state) => state.participants
+  )
+
   useEffect(() => {
     loadData();
   }, []);
 
+  useEffect(() => {
+        setAppointments(() => {
+            return appointmentsList.map((appointment) => {
+                return {
+                    ...appointment,
+                    start_time: appointment.startTime,
+                    end_time: appointment.endTime,
+                    participants: appointment.participants.map((participantId) => participantId.id),
+                };
+            });
+        });
+    }, [appointmentsList]);
+  
+    useEffect(() => {
+        setParticipants(participantsList);
+    }, [participantsList]);
+
   const loadData = async () => {
     setIsLoading(true);
     try {
-      const [participantsData, appointmentsData] = await Promise.all([
+      await Promise.all([
         dispatch(getAllParticipants()),
         dispatch(getAppointments()),
       ]);
-      setParticipants(participantsData.payload);
-      setAppointments(() => {
-        return appointmentsData.payload.map((appointment) => {
-          return {
-            ...appointment,
-            start_time: appointment.startTime,
-            end_time: appointment.endTime,
-            participants: appointment.participants.map((participantId) => participantId.id)
-          }
-        })
-      })
 
     } catch (error) {
       console.error('Error loading data:', error);
@@ -85,16 +98,14 @@ export default function Participants() {
       if (isNewParticipant) {
         dispatch(createParticipants(participantData)).then(() => {
           setIsFormOpen(false);
-          loadData();
         }).catch((error) => {
           setIsFormOpen(false);
-          loadData();
         });
       } else {
         // await Participant.update(currentParticipant.id, participantData);
         dispatch(updateParticipants({id: currentParticipant.id, participantData})).then(() => {
           setIsFormOpen(false);
-          loadData();
+          // loadData();
         })
       }
       
@@ -108,11 +119,11 @@ export default function Participants() {
       try {
         dispatch(deleteParticipants(participantId)).then(() => {
           setIsFormOpen(false);
-          loadData();
+          // loadData();
           
         }).catch((error) => {
           setIsFormOpen(false);
-          loadData();
+          // loadData();
         });
       } catch (error) {
         console.error('Error deleting participant:', error);
@@ -126,30 +137,15 @@ export default function Participants() {
     ).length;
   };
 
-  const getDepartments = () => {
-    const departments = new Set();
-    participants.forEach(participant => {
-      if (participant.department) {
-        departments.add(participant.department);
-      }
-    });
-    return Array.from(departments);
-  };
-
   const filterAndSortParticipants = () => {
     return participants
       .filter(participant => {
         // Apply search filter
         const matchesSearch = searchQuery === '' || 
           participant.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          participant.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          (participant.department && participant.department.toLowerCase().includes(searchQuery.toLowerCase()));
+          participant.email.toLowerCase().includes(searchQuery.toLowerCase())
         
-        // Apply department filter
-        const matchesDepartment = departmentFilter === 'all' || 
-          participant.department === departmentFilter;
-        
-        return matchesSearch && matchesDepartment;
+        return matchesSearch;
       })
       .sort((a, b) => {
         switch(sortBy) {
@@ -168,7 +164,7 @@ export default function Participants() {
   };
 
   const filteredParticipants = filterAndSortParticipants();
-  const departments = getDepartments();
+  // const departments = getDepartments();
 
   return (
     <div className="container mx-auto p-6">
@@ -202,7 +198,7 @@ export default function Participants() {
           </div>
           
           <div className="flex gap-3">
-            <Select
+            {/* <Select
               value={departmentFilter}
               onValueChange={setDepartmentFilter}
             >
@@ -218,7 +214,7 @@ export default function Participants() {
                   <SelectItem key={dept} value={dept}>{dept}</SelectItem>
                 ))}
               </SelectContent>
-            </Select>
+            </Select> */}
             
             <Select
               value={sortBy}

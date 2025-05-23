@@ -1,3 +1,4 @@
+import Loader from "@/components/ui/loader";
 import { userLogin } from "@/store/slices/loginSlice";
 import { use, useState } from "react";
 import { useDispatch } from "react-redux";
@@ -18,10 +19,6 @@ const Login = () => {
             .then((response) => {
                 if (response.payload.token) {
                     localStorage.setItem("token", response.payload.token);
-                    document.addEventListener("logoutUser", (e) => {
-                        localStorage.clear();
-                        navigate("/login");
-                    });
                     navigate("/");
                     setIsLoading(false);
                 } else {
@@ -84,7 +81,7 @@ const Login = () => {
                         disabled={isLoading}
                         className="w-full h-[40px] bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                        {!isLoading ? "Login" : <div class="spinner"></div>}
+                        {!isLoading ? "Login" : <Loader />}
                     </button>
                 </form>
             </div>
