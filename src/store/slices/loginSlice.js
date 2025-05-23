@@ -13,7 +13,7 @@ export const userLogin = createAsyncThunk(
 
             return fulfillWithValue(response.data)
         } catch (error) {
-            return rejectWithValue(error.message)
+            return rejectWithValue(error)
         }
     }
 )

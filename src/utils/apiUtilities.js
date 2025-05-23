@@ -69,11 +69,11 @@ export async function mastersAPICall({ endPoint, method, params }) {
             }
 
             // if token is expired, remove the token and redirect to login page
-            if(error.status === 401) {
+            if(endPoint !== apiEndPoints.userLogin && error.status === 401) {
                 userLogout();
                 return reject({ data: [], error: true, message: "Token expired" });
             }
-            return reject({ data: [], error: true, message: "Error" });
+            return reject({ data: [], error: true, message: error?.response?.data?.message || "Something went wrong" });
         }
     });
 }

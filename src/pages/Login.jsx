@@ -1,15 +1,16 @@
 import Loader from "@/components/ui/loader";
+import { useToast } from "@/components/ui/use-toast";
 import { userLogin } from "@/store/slices/loginSlice";
 import { use, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { toast } from "sonner";
 
 const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [errors, setErrors] = useState({ email: "", password: "" });
+    const { toast } = useToast()
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -42,6 +43,21 @@ const Login = () => {
         setIsLoading(true);
         dispatch(userLogin({ email, password }))
             .then((response) => {
+
+                if(response.payload.error){
+                    
+                    // set toast error message
+                    toast({
+                        title: "Error",
+                        description: response.payload.message,
+                        variant: 'destructive',
+                    });
+                    setIsLoading(false);
+                    return;
+                    
+                }
+
+
                 if (response.payload.token) {
                     localStorage.setItem("token", response.payload.token);
                     navigate("/");
