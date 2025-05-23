@@ -98,7 +98,7 @@ export default function TimeSlot({
                   className="absolute bottom-0 right-0 text-xs text-blue-600 hover:text-blue-800 font-medium"
                   onClick={(e) => {
                       e.stopPropagation();
-                      dispatch(handleSeeMoreAppontments({ open: true, appointments, date: date.toISOString(), time }));
+                      dispatch(handleSeeMoreAppontments({ open: true, appointments }));
 
                   }}
               >

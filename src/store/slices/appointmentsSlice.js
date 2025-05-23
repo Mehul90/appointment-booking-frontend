@@ -123,8 +123,8 @@ export const appointmentsSlice = createSlice({
     reducers: {
         handleSeeMoreAppontments: (state, action) => {
             state.isSeeMoreAppointments = action.payload.open;
-            state.date = action.payload.date;
-            state.time = action.payload.time;
+            state.date = action.payload.date || "";
+            state.time = action.payload.time || "";
             state.seeMoreAppointsments = action.payload.appointments;
         },
         resetSeeMoreAppointments: (state) => {
