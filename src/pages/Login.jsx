@@ -9,11 +9,36 @@ const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [isLoading, setIsLoading] = useState(false);
+    const [errors, setErrors] = useState({ email: "", password: "" });
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
+    const validateForm = () => {
+        let isValid = true;
+        const newErrors = { email: "", password: "" };
+
+        if (!email.trim()) {
+            newErrors.email = "Email is required";
+            isValid = false;
+        } else if (!/\S+@\S+\.\S+/.test(email)) {
+            newErrors.email = "Please enter a valid email address";
+            isValid = false;
+        }
+
+        if (!password.trim()) {
+            newErrors.password = "Password is required";
+            isValid = false;
+        }
+
+        setErrors(newErrors);
+        return isValid;
+    };
+
     const handleLogin = async () => {
+
+        if (!validateForm()) return;
+
         setIsLoading(true);
         dispatch(userLogin({ email, password }))
             .then((response) => {
@@ -57,6 +82,9 @@ const Login = () => {
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                         />
+                        {errors.email && (
+                            <p className="text-red-500 text-sm mt-1">{errors.email}</p>
+                        )}
                     </div>
                     <div className="mb-6">
                         <label
@@ -74,6 +102,9 @@ const Login = () => {
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                         />
+                        {errors.password && (
+                            <p className="text-red-500 text-sm mt-1">{errors.password}</p>
+                        )}
                     </div>
                     <button
                         type="button"
