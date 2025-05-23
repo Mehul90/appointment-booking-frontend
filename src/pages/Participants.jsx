@@ -25,6 +25,7 @@ import { Badge } from '@/components/ui/badge';
 import { useDispatch, useSelector } from 'react-redux';
 import { createParticipants, deleteParticipants, getAllParticipants, updateParticipants } from '@/store/slices/participantsSlice';
 import { getAppointments } from '@/store/slices/appointmentsSlice';
+import { useToast } from '@/components/ui/use-toast';
 
 export default function Participants() {
   const [participants, setParticipants] = useState([]);
@@ -38,6 +39,7 @@ export default function Participants() {
   const [sortBy, setSortBy] = useState('name_asc');
 
   const dispatch = useDispatch();
+  const { toast } = useToast()
 
   const { appointmentsList } = useSelector(
     (state) => state.appointments
@@ -96,7 +98,15 @@ export default function Participants() {
   const handleSaveParticipant = async (participantData) => {
     try {
       if (isNewParticipant) {
-        dispatch(createParticipants(participantData)).then(() => {
+        dispatch(createParticipants(participantData)).then((response) => {
+          if(response.payload.error) {
+            toast({
+              title: 'Error',
+              description: response.payload.message,
+              variant: 'destructive',
+          })
+          }
+          
           setIsFormOpen(false);
         }).catch((error) => {
           setIsFormOpen(false);

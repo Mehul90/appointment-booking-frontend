@@ -20,7 +20,7 @@ export const createParticipants = createAsyncThunk(
             dispatch(getAllParticipants());
             return fulfillWithValue(response.data);
         } catch (error) {
-            return rejectWithValue(error.message);
+            return rejectWithValue(error);
         }
     }
 );

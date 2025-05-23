@@ -62,6 +62,12 @@ export async function mastersAPICall({ endPoint, method, params }) {
 
     
         } catch (error) {
+            if(error.response && error.response.status === 400 && endPoint === apiEndPoints.createParticipants){
+                const { errors: [fieldError] } = error.response.data;
+
+                return reject({ data: [], error: true, message: fieldError.message });
+            }
+
             // if token is expired, remove the token and redirect to login page
             if(error.status === 401) {
                 userLogout();
