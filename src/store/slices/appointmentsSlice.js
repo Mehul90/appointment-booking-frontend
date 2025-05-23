@@ -119,6 +119,8 @@ export const appointmentsSlice = createSlice({
         date: "",
         time: "",
         seeMoreAppointsments: [],
+        deleteAppointmentModal: false,
+        deleteInProgress: false,
     },
     reducers: {
         handleSeeMoreAppontments: (state, action) => {
@@ -130,7 +132,10 @@ export const appointmentsSlice = createSlice({
         resetSeeMoreAppointments: (state) => {
             state.isSeeMoreAppointments = false;
             state.seeMoreAppointsments = [];
-        }
+        },
+        setDeleteAppointmentModal: (state, action) => {
+            state.deleteAppointmentModal = action.payload.open;
+        },
     },
     extraReducers: (builder) => {
         builder
@@ -155,10 +160,19 @@ export const appointmentsSlice = createSlice({
             .addCase(getAppointments.rejected, (state, action) => {
                 state.appointmentsList = [...state.appointmentsList];
             })
+            .addCase(deleteAppointment.pending, (state) => {
+                state.deleteInProgress = true;
+            })
+            .addCase(deleteAppointment.fulfilled, (state, action) => {
+                state.deleteInProgress = false;
+            })
+            .addCase(deleteAppointment.rejected, (state, action) => {
+                state.deleteInProgress = false;
+            })
     }
 })
 
-export const { handleSeeMoreAppontments, resetSeeMoreAppointments } = appointmentsSlice.actions
+export const { handleSeeMoreAppontments, resetSeeMoreAppointments, setDeleteAppointmentModal } = appointmentsSlice.actions
 
 
 export default appointmentsSlice

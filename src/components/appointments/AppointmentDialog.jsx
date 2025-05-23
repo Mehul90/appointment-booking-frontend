@@ -40,8 +40,10 @@ import {
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import Loader from '../ui/loader'
+import DeleteConfirmation from '../calendar/DeleteConfirmation'
+import { setDeleteAppointmentModal } from '@/store/slices/appointmentsSlice'
 
 const TIME_OPTIONS = Array.from({ length: 25 }, (_, i) => {
   const hour = Math.floor(i / 2) + 7 // Start from 7 AM
@@ -74,6 +76,9 @@ export default function AppointmentDialog({
   selectedDate,
   selectedTime,
 }) {
+
+  const dispatch = useDispatch()
+
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -87,9 +92,10 @@ export default function AppointmentDialog({
   const [errors, setErrors] = useState({})
   const [conflicts, setConflicts] = useState([])
 
-  const { isLoading: appointmentInProgress } = useSelector(
+  const { isLoading: appointmentInProgress, deleteAppointmentModal } = useSelector(
     (state) => state.appointments
   )
+  console.log("🚀 ~ deleteAppointmentModal:", deleteAppointmentModal)
 
   useEffect(() => {
     if (isNew) {
@@ -267,343 +273,353 @@ export default function AppointmentDialog({
   }
 
   return (
-    <Dialog
-      open={isOpen}
-      onOpenChange={(open) => {
-        if (!open) onClose()
-      }}
-    >
-      <DialogContent className='sm:max-w-[535px] max-h-[90vh] overflow-y-auto'>
-        <DialogHeader>
-          <DialogTitle className='text-xl'>
-            {isNew ? 'Create New Appointment' : 'Edit Appointment'}
-          </DialogTitle>
-          {isNew && (
-            <DialogDescription>
-              Schedule a new appointment by filling out the details below.
-            </DialogDescription>
-          )}
-        </DialogHeader>
-
-        <div className='grid gap-4 py-4'>
-          <div className='grid gap-2'>
-            <Label htmlFor='title'>Title</Label>
-            <Input
-              id='title'
-              value={formData.title}
-              onChange={(e) => handleInputChange('title', e.target.value)}
-              placeholder='Meeting title'
-              className={errors.title ? 'border-red-500' : ''}
-            />
-            {errors.title && (
-              <p className='text-sm text-red-500'>{errors.title}</p>
-            )}
-          </div>
-
-          <div className='grid gap-2'>
-            <Label htmlFor='description'>Description (Optional)</Label>
-            <Textarea
-              id='description'
-              value={formData.description || ''}
-              onChange={(e) => handleInputChange('description', e.target.value)}
-              placeholder='Meeting agenda or notes'
-              rows={3}
-            />
-          </div>
-
-          <div className='grid grid-cols-2 gap-4'>
-            <div className='grid gap-2'>
-              <Label>Date</Label>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant='outline'
-                    className={`justify-start text-left font-normal ${
-                      errors.date ? 'border-red-500' : ''
-                    }`}
-                  >
-                    <CalendarIcon className='mr-2 h-4 w-4' />
-                    {formData.date
-                      ? format(formData.date, 'PPP')
-                      : 'Select date'}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className='w-auto p-0'>
-                  <Calendar
-                    mode='single'
-                    selected={formData.date}
-                    onSelect={(date) => handleInputChange('date', date)}
-                    initialFocus
-                    disabled={(date) => date < new Date(new Date().setHours(0,0,0,0))}
-                  />
-                </PopoverContent>
-              </Popover>
-              {errors.date && (
-                <p className='text-sm text-red-500'>{errors.date}</p>
-              )}
-            </div>
-
-            <div className='grid gap-2'>
-              <Label>Color</Label>
-              <div className='flex flex-wrap gap-2'>
-                {COLORS.map((color) => (
-                  <div
-                    key={color}
-                    className={`w-6 h-6 rounded-full cursor-pointer ${
-                      formData.color === color
-                        ? 'ring-2 ring-offset-2 ring-black'
-                        : ''
-                    }`}
-                    style={{ backgroundColor: color }}
-                    onClick={() => handleInputChange('color', color)}
-                  />
-                ))}
-              </div>
-            </div>
-          </div>
-
-          <div className='grid grid-cols-2 gap-4'>
-            <div className='grid gap-2'>
-              <Label htmlFor='start_time'>Start Time</Label>
-              <Select
-                value={formData.start_time}
-                onValueChange={(value) =>
-                  handleInputChange('start_time', value)
-                }
-              >
-                <SelectTrigger
-                  className={errors.start_time ? 'border-red-500' : ''}
-                  id='start_time'
-                >
-                  <SelectValue placeholder='Select start time' />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectLabel>Morning</SelectLabel>
-                    {TIME_OPTIONS.filter(
-                      (time) => time.startsWith('0') || time.startsWith('1')
-                    ).map((time) => (
-                      <SelectItem key={`start-${time}`} value={time}>
-                        {time}
-                      </SelectItem>
-                    ))}
-                    <SelectLabel>Afternoon</SelectLabel>
-                    {TIME_OPTIONS.filter(
-                      (time) =>
-                        (time.startsWith('1') &&
-                          parseInt(time.split(':')[0]) > 11) ||
-                        time.startsWith('2') ||
-                        time.startsWith('3') ||
-                        time.startsWith('4') ||
-                        time.startsWith('5') ||
-                        time.startsWith('6') ||
-                        time.startsWith('7')
-                    ).map((time) => (
-                      <SelectItem key={`start-${time}`} value={time}>
-                        {time}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-              {errors.start_time && (
-                <p className='text-sm text-red-500'>{errors.start_time}</p>
-              )}
-            </div>
-
-            <div className='grid gap-2'>
-              <Label htmlFor='end_time'>End Time</Label>
-              <Select
-                value={formData.end_time}
-                onValueChange={(value) => handleInputChange('end_time', value)}
-              >
-                <SelectTrigger
-                  className={errors.end_time ? 'border-red-500' : ''}
-                  id='end_time'
-                >
-                  <SelectValue placeholder='Select end time' />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectLabel>Morning</SelectLabel>
-                    {TIME_OPTIONS.filter(
-                      (time) => time.startsWith('0') || time.startsWith('1')
-                    ).map((time) => (
-                      <SelectItem key={`end-${time}`} value={time}>
-                        {time}
-                      </SelectItem>
-                    ))}
-                    <SelectLabel>Afternoon</SelectLabel>
-                    {TIME_OPTIONS.filter(
-                      (time) =>
-                        (time.startsWith('1') &&
-                          parseInt(time.split(':')[0]) > 11) ||
-                        time.startsWith('2') ||
-                        time.startsWith('3') ||
-                        time.startsWith('4') ||
-                        time.startsWith('5') ||
-                        time.startsWith('6') ||
-                        time.startsWith('7')
-                    ).map((time) => (
-                      <SelectItem key={`end-${time}`} value={time}>
-                        {time}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-              {errors.end_time && (
-                <p className='text-sm text-red-500'>{errors.end_time}</p>
-              )}
-            </div>
-          </div>
-
-          <div className='grid gap-2'>
-            <Label htmlFor='location'>Location (Optional)</Label>
-            <div className='flex'>
-              <div className='flex items-center px-3 bg-gray-50 border border-r-0 rounded-l-md'>
-                <MapPin className='h-4 w-4 text-gray-500' />
-              </div>
-              <Input
-                id='location'
-                value={formData.location || ''}
-                onChange={(e) => handleInputChange('location', e.target.value)}
-                placeholder='Conference room, Zoom link, etc.'
-                className='rounded-l-none'
-              />
-            </div>
-          </div>
-
-          <div className='grid gap-2'>
-            <div className='flex justify-between items-center'>
-              <Label htmlFor='participants'>Participants</Label>
-              {getSelectedParticipants().length > 0 && (
-                <Badge variant='outline' className='text-xs'>
-                  {getSelectedParticipants().length} selected
-                </Badge>
-              )}
-            </div>
-
-            <Select
-              value='placeholder'
-              onValueChange={(value) => {
-                const updatedParticipants = formData.participants.includes(
-                  value
-                )
-                  ? formData.participants.filter((id) => id !== value)
-                  : [...formData.participants, value]
-
-                handleInputChange('participants', updatedParticipants)
+      <>
+          <Dialog
+              open={isOpen}
+              onOpenChange={(open) => {
+                  if (!open) onClose();
               }}
-            >
-              <SelectTrigger
-                className={`${errors.participants ? 'border-red-500' : ''}`}
-                id='participants'
-              >
-                <SelectValue placeholder='Select participants' />
-              </SelectTrigger>
-              <SelectContent>
-                {participants.map((participant) => (
-                  <SelectItem
-                    key={participant.id}
-                    value={participant.id}
-                    className='flex items-center'
-                  >
-                    <div className='flex items-center'>
-                      {formData.participants.includes(participant.id) && (
-                        <Check className='h-4 w-4 mr-2 text-green-500' />
+          >
+              <DialogContent className="sm:max-w-[535px] max-h-[90vh] overflow-y-auto">
+                  <DialogHeader>
+                      <DialogTitle className="text-xl">
+                          {isNew ? "Create New Appointment" : "Edit Appointment"}
+                      </DialogTitle>
+                      {isNew && (
+                          <DialogDescription>
+                              Schedule a new appointment by filling out the details below.
+                          </DialogDescription>
                       )}
-                      {participant.name}
-                    </div>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            {errors.participants && (
-              <p className='text-sm text-red-500'>{errors.participants}</p>
-            )}
+                  </DialogHeader>
 
-            {getSelectedParticipants().length > 0 && (
-              <div className='flex flex-wrap gap-2 mt-1'>
-                {getSelectedParticipants().map((participant) => (
-                  <Badge
-                    key={participant.id}
-                    variant='secondary'
-                    className='flex items-center gap-1 pl-1'
-                  >
-                    <Avatar className='h-5 w-5'>
-                      <AvatarFallback
-                        style={{ backgroundColor: participant.color }}
-                        className='text-[10px] text-white'
-                      >
-                        {participant.name
-                          .split(' ')
-                          .map((n) => n[0])
-                          .join('')
-                          .toUpperCase()}
-                      </AvatarFallback>
-                    </Avatar>
-                    <span>{participant.name}</span>
-                    <button
-                      className='ml-1 rounded-full hover:bg-gray-200 p-0.5'
-                      onClick={() =>
-                        handleInputChange(
-                          'participants',
-                          formData.participants.filter(
-                            (id) => id !== participant.id
-                          )
-                        )
-                      }
-                    >
-                      <X className='h-3 w-3' />
-                    </button>
-                  </Badge>
-                ))}
-              </div>
-            )}
-          </div>
+                  <div className="grid gap-4 py-4">
+                      <div className="grid gap-2">
+                          <Label htmlFor="title">Title</Label>
+                          <Input
+                              id="title"
+                              value={formData.title}
+                              onChange={(e) => handleInputChange("title", e.target.value)}
+                              placeholder="Meeting title"
+                              className={errors.title ? "border-red-500" : ""}
+                          />
+                          {errors.title && <p className="text-sm text-red-500">{errors.title}</p>}
+                      </div>
 
-          {conflicts.length > 0 && (
-            <Alert variant='destructive' className='mt-2'>
-              <AlertTriangle className='h-4 w-4' />
-              <AlertDescription>
-                <div className='text-sm font-semibold mb-1'>
-                  Scheduling conflicts detected:
-                </div>
-                <ul className='text-xs space-y-1 list-disc pl-4'>
-                  {conflicts.map((conflict, index) => (
-                    <li key={index}>
-                      {conflict.participant.name} has "
-                      {conflict.appointment.title}" at{' '}
-                      {conflict.appointment.start_time}-
-                      {conflict.appointment.end_time}
-                    </li>
-                  ))}
-                </ul>
-              </AlertDescription>
-            </Alert>
-          )}
-        </div>
+                      <div className="grid gap-2">
+                          <Label htmlFor="description">Description (Optional)</Label>
+                          <Textarea
+                              id="description"
+                              value={formData.description || ""}
+                              onChange={(e) => handleInputChange("description", e.target.value)}
+                              placeholder="Meeting agenda or notes"
+                              rows={3}
+                          />
+                      </div>
 
-        <DialogFooter className='flex gap-2'>
-          {!isNew && (
-            <Button
-              variant='outline'
-              onClick={() => onDelete(appointment.id)}
-              className='mr-auto text-red-500 hover:text-red-700 hover:bg-red-50'
-            >
-              <Trash className='h-4 w-4 mr-2' />
-              Delete
-            </Button>
-          )}
-          <Button variant='outline' onClick={onClose}>
-            Cancel
-          </Button>
-          <Button onClick={handleSubmit} className="w-[165px]" >
-            { appointmentInProgress ? <Loader /> : isNew ? 'Create Appointment' : 'Save Changes' }
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
-  )
+                      <div className="grid grid-cols-2 gap-4">
+                          <div className="grid gap-2">
+                              <Label>Date</Label>
+                              <Popover>
+                                  <PopoverTrigger asChild>
+                                      <Button
+                                          variant="outline"
+                                          className={`justify-start text-left font-normal ${
+                                              errors.date ? "border-red-500" : ""
+                                          }`}
+                                      >
+                                          <CalendarIcon className="mr-2 h-4 w-4" />
+                                          {formData.date
+                                              ? format(formData.date, "PPP")
+                                              : "Select date"}
+                                      </Button>
+                                  </PopoverTrigger>
+                                  <PopoverContent className="w-auto p-0">
+                                      <Calendar
+                                          mode="single"
+                                          selected={formData.date}
+                                          onSelect={(date) => handleInputChange("date", date)}
+                                          initialFocus
+                                          disabled={(date) =>
+                                              date < new Date(new Date().setHours(0, 0, 0, 0))
+                                          }
+                                      />
+                                  </PopoverContent>
+                              </Popover>
+                              {errors.date && <p className="text-sm text-red-500">{errors.date}</p>}
+                          </div>
+
+                          <div className="grid gap-2">
+                              <Label>Color</Label>
+                              <div className="flex flex-wrap gap-2">
+                                  {COLORS.map((color) => (
+                                      <div
+                                          key={color}
+                                          className={`w-6 h-6 rounded-full cursor-pointer ${
+                                              formData.color === color
+                                                  ? "ring-2 ring-offset-2 ring-black"
+                                                  : ""
+                                          }`}
+                                          style={{ backgroundColor: color }}
+                                          onClick={() => handleInputChange("color", color)}
+                                      />
+                                  ))}
+                              </div>
+                          </div>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-4">
+                          <div className="grid gap-2">
+                              <Label htmlFor="start_time">Start Time</Label>
+                              <Select
+                                  value={formData.start_time}
+                                  onValueChange={(value) => handleInputChange("start_time", value)}
+                              >
+                                  <SelectTrigger
+                                      className={errors.start_time ? "border-red-500" : ""}
+                                      id="start_time"
+                                  >
+                                      <SelectValue placeholder="Select start time" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                      <SelectGroup>
+                                          <SelectLabel>Morning</SelectLabel>
+                                          {TIME_OPTIONS.filter(
+                                              (time) => time.startsWith("0") || time.startsWith("1")
+                                          ).map((time) => (
+                                              <SelectItem key={`start-${time}`} value={time}>
+                                                  {time}
+                                              </SelectItem>
+                                          ))}
+                                          <SelectLabel>Afternoon</SelectLabel>
+                                          {TIME_OPTIONS.filter(
+                                              (time) =>
+                                                  (time.startsWith("1") &&
+                                                      parseInt(time.split(":")[0]) > 11) ||
+                                                  time.startsWith("2") ||
+                                                  time.startsWith("3") ||
+                                                  time.startsWith("4") ||
+                                                  time.startsWith("5") ||
+                                                  time.startsWith("6") ||
+                                                  time.startsWith("7")
+                                          ).map((time) => (
+                                              <SelectItem key={`start-${time}`} value={time}>
+                                                  {time}
+                                              </SelectItem>
+                                          ))}
+                                      </SelectGroup>
+                                  </SelectContent>
+                              </Select>
+                              {errors.start_time && (
+                                  <p className="text-sm text-red-500">{errors.start_time}</p>
+                              )}
+                          </div>
+
+                          <div className="grid gap-2">
+                              <Label htmlFor="end_time">End Time</Label>
+                              <Select
+                                  value={formData.end_time}
+                                  onValueChange={(value) => handleInputChange("end_time", value)}
+                              >
+                                  <SelectTrigger
+                                      className={errors.end_time ? "border-red-500" : ""}
+                                      id="end_time"
+                                  >
+                                      <SelectValue placeholder="Select end time" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                      <SelectGroup>
+                                          <SelectLabel>Morning</SelectLabel>
+                                          {TIME_OPTIONS.filter(
+                                              (time) => time.startsWith("0") || time.startsWith("1")
+                                          ).map((time) => (
+                                              <SelectItem key={`end-${time}`} value={time}>
+                                                  {time}
+                                              </SelectItem>
+                                          ))}
+                                          <SelectLabel>Afternoon</SelectLabel>
+                                          {TIME_OPTIONS.filter(
+                                              (time) =>
+                                                  (time.startsWith("1") &&
+                                                      parseInt(time.split(":")[0]) > 11) ||
+                                                  time.startsWith("2") ||
+                                                  time.startsWith("3") ||
+                                                  time.startsWith("4") ||
+                                                  time.startsWith("5") ||
+                                                  time.startsWith("6") ||
+                                                  time.startsWith("7")
+                                          ).map((time) => (
+                                              <SelectItem key={`end-${time}`} value={time}>
+                                                  {time}
+                                              </SelectItem>
+                                          ))}
+                                      </SelectGroup>
+                                  </SelectContent>
+                              </Select>
+                              {errors.end_time && (
+                                  <p className="text-sm text-red-500">{errors.end_time}</p>
+                              )}
+                          </div>
+                      </div>
+
+                      <div className="grid gap-2">
+                          <Label htmlFor="location">Location (Optional)</Label>
+                          <div className="flex">
+                              <div className="flex items-center px-3 bg-gray-50 border border-r-0 rounded-l-md">
+                                  <MapPin className="h-4 w-4 text-gray-500" />
+                              </div>
+                              <Input
+                                  id="location"
+                                  value={formData.location || ""}
+                                  onChange={(e) => handleInputChange("location", e.target.value)}
+                                  placeholder="Conference room, Zoom link, etc."
+                                  className="rounded-l-none"
+                              />
+                          </div>
+                      </div>
+
+                      <div className="grid gap-2">
+                          <div className="flex justify-between items-center">
+                              <Label htmlFor="participants">Participants</Label>
+                              {getSelectedParticipants().length > 0 && (
+                                  <Badge variant="outline" className="text-xs">
+                                      {getSelectedParticipants().length} selected
+                                  </Badge>
+                              )}
+                          </div>
+
+                          <Select
+                              value="placeholder"
+                              onValueChange={(value) => {
+                                  const updatedParticipants = formData.participants.includes(value)
+                                      ? formData.participants.filter((id) => id !== value)
+                                      : [...formData.participants, value];
+
+                                  handleInputChange("participants", updatedParticipants);
+                              }}
+                          >
+                              <SelectTrigger
+                                  className={`${errors.participants ? "border-red-500" : ""}`}
+                                  id="participants"
+                              >
+                                  <SelectValue placeholder="Select participants" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                  {participants.map((participant) => (
+                                      <SelectItem
+                                          key={participant.id}
+                                          value={participant.id}
+                                          className="flex items-center"
+                                      >
+                                          <div className="flex items-center">
+                                              {formData.participants.includes(participant.id) && (
+                                                  <Check className="h-4 w-4 mr-2 text-green-500" />
+                                              )}
+                                              {participant.name}
+                                          </div>
+                                      </SelectItem>
+                                  ))}
+                              </SelectContent>
+                          </Select>
+                          {errors.participants && (
+                              <p className="text-sm text-red-500">{errors.participants}</p>
+                          )}
+
+                          {getSelectedParticipants().length > 0 && (
+                              <div className="flex flex-wrap gap-2 mt-1">
+                                  {getSelectedParticipants().map((participant) => (
+                                      <Badge
+                                          key={participant.id}
+                                          variant="secondary"
+                                          className="flex items-center gap-1 pl-1"
+                                      >
+                                          <Avatar className="h-5 w-5">
+                                              <AvatarFallback
+                                                  style={{ backgroundColor: participant.color }}
+                                                  className="text-[10px] text-white"
+                                              >
+                                                  {participant.name
+                                                      .split(" ")
+                                                      .map((n) => n[0])
+                                                      .join("")
+                                                      .toUpperCase()}
+                                              </AvatarFallback>
+                                          </Avatar>
+                                          <span>{participant.name}</span>
+                                          <button
+                                              className="ml-1 rounded-full hover:bg-gray-200 p-0.5"
+                                              onClick={() =>
+                                                  handleInputChange(
+                                                      "participants",
+                                                      formData.participants.filter(
+                                                          (id) => id !== participant.id
+                                                      )
+                                                  )
+                                              }
+                                          >
+                                              <X className="h-3 w-3" />
+                                          </button>
+                                      </Badge>
+                                  ))}
+                              </div>
+                          )}
+                      </div>
+
+                      {conflicts.length > 0 && (
+                          <Alert variant="destructive" className="mt-2">
+                              <AlertTriangle className="h-4 w-4" />
+                              <AlertDescription>
+                                  <div className="text-sm font-semibold mb-1">
+                                      Scheduling conflicts detected:
+                                  </div>
+                                  <ul className="text-xs space-y-1 list-disc pl-4">
+                                      {conflicts.map((conflict, index) => (
+                                          <li key={index}>
+                                              {conflict.participant.name} has "
+                                              {conflict.appointment.title}" at{" "}
+                                              {conflict.appointment.start_time}-
+                                              {conflict.appointment.end_time}
+                                          </li>
+                                      ))}
+                                  </ul>
+                              </AlertDescription>
+                          </Alert>
+                      )}
+                  </div>
+
+                  <DialogFooter className="flex gap-2">
+                      {!isNew && (
+                          <Button
+                              variant="outline"
+                              onClick={() => dispatch(setDeleteAppointmentModal({ open: true }))}
+                              className="mr-auto text-red-500 hover:text-red-700 hover:bg-red-50"
+                          >
+                              <Trash className="h-4 w-4 mr-2" />
+                              Delete
+                          </Button>
+                      )}
+                      <Button variant="outline" onClick={onClose}>
+                          Cancel
+                      </Button>
+                      <Button onClick={handleSubmit} className="w-[165px]">
+                          {appointmentInProgress ? (
+                              <Loader />
+                          ) : isNew ? (
+                              "Create Appointment"
+                          ) : (
+                              "Save Changes"
+                          )}
+                      </Button>
+                  </DialogFooter>
+              </DialogContent>
+          </Dialog>
+
+          <DeleteConfirmation
+              isOpen={deleteAppointmentModal}
+              onClose={() => dispatch(setDeleteAppointmentModal({ open: false }))}
+              onDelete={() => onDelete(appointment.id)}
+              title="Delete Appointment"
+              description="Are you sure you want to delete this appointment? This action cannot be undone."
+          />
+      </>
+  );
 }

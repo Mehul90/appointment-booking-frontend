@@ -14,7 +14,7 @@ import CalendarGrid from '../components/calendar/CalendarGrid'
 import AppointmentDialog from '../components/appointments/AppointmentDialog'
 import { useToast } from '@/components/ui/use-toast'
 import { useDispatch, useSelector } from 'react-redux'
-import { createAppointment, deleteAppointment, getAppointments, resetSeeMoreAppointments, updateAppointment } from '@/store/slices/appointmentsSlice'
+import { createAppointment, deleteAppointment, getAppointments, resetSeeMoreAppointments, setDeleteAppointmentModal, updateAppointment } from '@/store/slices/appointmentsSlice'
 import { getAllParticipants } from '@/store/slices/participantsSlice'
 import SeeMore from '@/components/calendar/SeeMore'
 
@@ -155,7 +155,7 @@ export default function Calendar() {
   }
 
   const handleDeleteAppointment = async (appointmentId) => {
-    if (confirm('Are you sure you want to delete this appointment?')) {
+    // if (confirm('Are you sure you want to delete this appointment?')) {
       try {
         // await Appointment.delete(appointmentId)
 
@@ -166,7 +166,11 @@ export default function Calendar() {
             title: 'Success',
             description: 'Appointment deleted successfully',
           })
+
+          dispatch(setDeleteAppointmentModal({ open: false }))
+
         }).catch(() => {
+          dispatch(setDeleteAppointmentModal({ open: false }))
           toast({
           title: 'Error',
           description: 'Failed to delete appointment. Please try again.',
@@ -175,6 +179,7 @@ export default function Calendar() {
         })
 
       } catch (error) {
+        dispatch(setDeleteAppointmentModal({ open: false }))
         console.error('Error deleting appointment:', error)
         toast({
           title: 'Error',
@@ -182,7 +187,7 @@ export default function Calendar() {
           variant: 'destructive',
         })
       }
-    }
+    // }
   }
 
   const filteredAppointments = appointments.filter((appointment) => {
