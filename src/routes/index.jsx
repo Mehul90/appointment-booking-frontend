@@ -6,6 +6,7 @@ import Participants from "@/pages/Participants";
 import { createBrowserRouter } from "react-router-dom";
 import ProtectedRoutes from "./ProtectedRoutes";
 import PublicRoutes from "./PublicRoutes";
+import NotFound from "@/pages/NotFound";
 
 export const AppRoutes = createBrowserRouter([
     {
@@ -50,4 +51,8 @@ export const AppRoutes = createBrowserRouter([
             },
         ],
     },
+    {
+        path: "*",
+        element: <NotFound />
+    }
 ]);

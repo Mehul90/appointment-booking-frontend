@@ -52,7 +52,7 @@ export default function Calendar() {
                   ...appointment,
                   start_time: appointment.startTime,
                   end_time: appointment.endTime,
-                  participants: appointment.participants.map((participantId) => participantId.id),
+                  participants: appointment.appointmentParticipants.map((participant) => participant.participant.id),
               };
           });
       });

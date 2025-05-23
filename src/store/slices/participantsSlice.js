@@ -13,7 +13,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
  */
 export const createParticipants = createAsyncThunk(
     "participants/createParticipants",
-    async (data, { rejectWithValue, dispatch }) => {
+    async (data, { rejectWithValue, fulfillWithValue,  dispatch }) => {
         try {
             
             const response = await mastersAPICall({ endPoint: apiEndPoints.createParticipants, method: APIMethods.POST, params: data  })
