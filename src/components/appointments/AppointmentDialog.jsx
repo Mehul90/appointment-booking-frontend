@@ -273,7 +273,7 @@ export default function AppointmentDialog({
         if (!open) onClose()
       }}
     >
-      <DialogContent className='sm:max-w-[535px]'>
+      <DialogContent className='sm:max-w-[535px] max-h-[90vh] overflow-y-auto'>
         <DialogHeader>
           <DialogTitle className='text-xl'>
             {isNew ? 'Create New Appointment' : 'Edit Appointment'}
