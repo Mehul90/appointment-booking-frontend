@@ -390,7 +390,7 @@ export default function AppointmentDialog({
                                                   {time}
                                               </SelectItem>
                                           ))}
-                                          <SelectLabel>Afternoon</SelectLabel>
+                                          {/* <SelectLabel>Afternoon</SelectLabel>
                                           {TIME_OPTIONS.filter(
                                               (time) =>
                                                   (time.startsWith("1") &&
@@ -405,7 +405,7 @@ export default function AppointmentDialog({
                                               <SelectItem key={`start-${time}`} value={time}>
                                                   {time}
                                               </SelectItem>
-                                          ))}
+                                          ))} */}
                                       </SelectGroup>
                                   </SelectContent>
                               </Select>
@@ -436,7 +436,7 @@ export default function AppointmentDialog({
                                                   {time}
                                               </SelectItem>
                                           ))}
-                                          <SelectLabel>Afternoon</SelectLabel>
+                                          {/* <SelectLabel>Afternoon</SelectLabel>
                                           {TIME_OPTIONS.filter(
                                               (time) =>
                                                   (time.startsWith("1") &&
@@ -451,7 +451,7 @@ export default function AppointmentDialog({
                                               <SelectItem key={`end-${time}`} value={time}>
                                                   {time}
                                               </SelectItem>
-                                          ))}
+                                          ))} */}
                                       </SelectGroup>
                                   </SelectContent>
                               </Select>
