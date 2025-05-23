@@ -158,7 +158,7 @@ export default function CalendarGrid({
           <div key={dayData.date.toString()} className="flex-1 border-r">
             {dayData.timeSlots.map((slot) => (
               <TimeSlot
-                key={`${format(dayData.date, 'yyyy-MM-dd')}-${slot.time}`}
+                key={`${format(dayData.date, 'yyyy-MM-dd')}-${slot.timeSlots[0]}`}
                 date={dayData.date}
                 time={slot.timeSlots}
                 appointments={slot.appointments}
