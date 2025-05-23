@@ -27,3 +27,6 @@ dist-ssr
 # ignore lock files
 package-lock.json
 yarn.lock
+
+# ignore .zip files
+*.zip
