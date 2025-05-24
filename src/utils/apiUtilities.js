@@ -61,7 +61,7 @@ export async function mastersAPICall({ endPoint, method, params }) {
             return resolve({ data: responseData, error: false, message: "Success" });
 
         } catch (error) {
-            if(error.response && error.response.status === 400 && endPoint === apiEndPoints.createParticipants || !apiEndPoints.updateParticipants("").includes(endPoint)) {
+            if(error.response && error.response.status === 400 && (endPoint === apiEndPoints.createParticipants || !apiEndPoints.updateParticipants("").includes(endPoint))) {
                 const { errors: [fieldError] } = error.response.data;
 
                 return reject({ data: [], error: true, message: fieldError.message });
