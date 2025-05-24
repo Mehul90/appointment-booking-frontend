@@ -4,6 +4,7 @@ import { RouterProvider } from 'react-router-dom'
 import { AppRoutes } from './routes'
 import { Provider } from 'react-redux'
 import { store } from './store'
+import ErrorFallback from './components/ui/ErrorFallback'
 
 class ErrorBoundary extends React.Component {
   constructor(props) {
@@ -44,22 +45,7 @@ class ErrorBoundary extends React.Component {
   render() {
     if (this.state.hasError) {
       return (
-        <div className='flex items-center justify-center min-h-screen bg-gray-50'>
-          <div className='p-6 max-w-sm mx-auto bg-white rounded-xl shadow-md'>
-            <h2 className='text-xl font-bold text-red-600 mb-2'>
-              Something went wrong
-            </h2>
-            <p className='text-gray-500 mb-4'>
-              {this.state.error?.message || 'An unexpected error occurred'}
-            </p>
-            <button
-              className='bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600'
-              onClick={() => window.location.reload()}
-            >
-              Reload page
-            </button>
-          </div>
-        </div>
+        <ErrorFallback />
       )
     }
     return this.props.children
