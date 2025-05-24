@@ -14,8 +14,12 @@ import Loader from "../ui/loader";
 
 const DeleteConfirmation = ({ isOpen, onClose, onDelete, title, description }) => {
 
-    const { deleteInProgress } = useSelector(
+    const { deleteInProgress: deleteAppointment } = useSelector(
     (state) => state.appointments
+  )
+
+  const { deleteInProgress: deleteParticipant } = useSelector(
+    (state) => state.participants
   )
 
     return (
@@ -35,12 +39,12 @@ const DeleteConfirmation = ({ isOpen, onClose, onDelete, title, description }) =
                     <Button
                         variant="outline"
                         onClick={onDelete}
-                        className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                        className="text-red-500 w-[110px] hover:text-red-700 hover:bg-red-50"
                     >
                         {/* <Trash className="h-4 w-4 mr-2" />
                         Delete */}
-                        {deleteInProgress ? (
-                            <Loader />
+                        {deleteAppointment || deleteParticipant ? (
+                            <Loader loaderColor={"border-sky-950"} />
                         ) : (
                             <>
                                 <Trash className="h-4 w-4 mr-2" />

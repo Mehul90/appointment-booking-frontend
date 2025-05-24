@@ -23,9 +23,10 @@ import {
 } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { useDispatch, useSelector } from 'react-redux';
-import { createParticipants, deleteParticipants, getAllParticipants, updateParticipants } from '@/store/slices/participantsSlice';
+import { createParticipants, deleteParticipants, getAllParticipants, setDeleteParticipantsModal, updateParticipants } from '@/store/slices/participantsSlice';
 import { getAppointments } from '@/store/slices/appointmentsSlice';
 import { useToast } from '@/components/ui/use-toast';
+import DeleteConfirmation from '@/components/calendar/DeleteConfirmation';
 
 export default function Participants() {
   const [participants, setParticipants] = useState([]);
@@ -44,7 +45,7 @@ export default function Participants() {
   const { appointmentsList } = useSelector(
     (state) => state.appointments
   )
-  const { participantsList } = useSelector(
+  const { participantsList, deleteParticipantsModal, participantId } = useSelector(
     (state) => state.participants
   )
 
@@ -131,21 +132,23 @@ export default function Participants() {
     }
   };
 
-  const handleDeleteParticipant = async (participantId) => {
-    if (confirm('Are you sure you want to delete this participant? This will not delete any appointments.')) {
+  const handleDeleteParticipant = async () => {
+    // if (confirm('Are you sure you want to delete this participant? This will not delete any appointments.')) {
       try {
         dispatch(deleteParticipants(participantId)).then(() => {
           setIsFormOpen(false);
+          dispatch(setDeleteParticipantsModal({ open: false }))
           // loadData();
           
         }).catch((error) => {
           setIsFormOpen(false);
+          dispatch(setDeleteParticipantsModal({ open: false }))
           // loadData();
         });
       } catch (error) {
         console.error('Error deleting participant:', error);
       }
-    }
+    // }
   };
 
   const getAppointmentsCountForParticipant = (participantId) => {
@@ -308,7 +311,7 @@ export default function Participants() {
               participant={participant}
               appointmentsCount={getAppointmentsCountForParticipant(participant.id)}
               onEdit={handleEditParticipant}
-              onDelete={handleDeleteParticipant}
+              onDelete={() => dispatch(setDeleteParticipantsModal({ open: true, participantId: participant.id }))}
               // onViewAppointments={handleViewAppointments}
             />
           ))}
@@ -321,8 +324,17 @@ export default function Participants() {
         participant={currentParticipant}
         isNew={isNewParticipant}
         onSave={handleSaveParticipant}
-        onDelete={handleDeleteParticipant}
+        // onDelete={handleDeleteParticipant}
       />
+
+      <DeleteConfirmation
+          isOpen={deleteParticipantsModal}
+          onClose={() => dispatch(setDeleteParticipantsModal({ open: false }))}
+          onDelete={() => handleDeleteParticipant()}
+          title="Delete Participant"
+          description="Are you sure you want to delete this participant? This will not delete any appointments."
+      />
+
     </div>
   );
 }

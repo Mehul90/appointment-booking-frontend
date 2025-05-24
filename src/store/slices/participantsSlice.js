@@ -106,8 +106,16 @@ export const participantsSlice = createSlice({
     initialState: {
         isLoading: false,
         participantsList: [],
+        deleteParticipantsModal: false,
+        deleteInProgress: false,
+        participantId: null
     },
-    reducers: {},
+    reducers: {
+        setDeleteParticipantsModal: (state, action) => {
+            state.deleteParticipantsModal = action.payload.open;
+            state.participantId = action.payload.participantId || null
+        }
+    },
     extraReducers: (builder) => {
         builder
             .addCase(getAllParticipants.pending, (state) => {
@@ -141,7 +149,18 @@ export const participantsSlice = createSlice({
             .addCase(updateParticipants.rejected, (state, action) => {
                 state.isLoading = false;
             })
+            .addCase(deleteParticipants.pending, (state) => {
+                state.deleteInProgress = true;
+            })
+            .addCase(deleteParticipants.fulfilled, (state, action) => {
+                state.deleteInProgress = false;
+            })
+            .addCase(deleteParticipants.rejected, (state, action) => {
+                state.deleteInProgress = false;
+            });
     },
 });
+
+export const { setDeleteParticipantsModal } = participantsSlice.actions;
 
 export default participantsSlice;

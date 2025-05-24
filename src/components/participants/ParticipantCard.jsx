@@ -59,7 +59,7 @@ export default function ParticipantCard({
                                     Edit
                                 </DropdownMenuItem>
                                 <DropdownMenuItem
-                                    onClick={() => onDelete(participant.id)}
+                                    onClick={onDelete}
                                     className="text-red-600"
                                 >
                                     Delete

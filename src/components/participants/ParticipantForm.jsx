@@ -11,8 +11,9 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Trash } from 'lucide-react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import Loader from '../ui/loader'
+import { setDeleteParticipantsModal } from '@/store/slices/participantsSlice'
 
 const AVATAR_COLORS = [
   '#6366f1', // Indigo
@@ -40,6 +41,8 @@ export default function ParticipantForm({
     color: AVATAR_COLORS[0],
   })
   const [errors, setErrors] = useState({})
+
+  const dispatch = useDispatch()
 
   const { isLoading: participantInProgress } = useSelector(
     (state) => state.participants
@@ -181,7 +184,7 @@ export default function ParticipantForm({
           {!isNew && (
             <Button
               variant='outline'
-              onClick={() => onDelete(participant.id)}
+              onClick={() => dispatch(setDeleteParticipantsModal({ open: true, participantId: participant.id }))}
               className='mr-auto text-red-500 hover:text-red-700 hover:bg-red-50'
             >
               <Trash className='h-4 w-4 mr-2' />
