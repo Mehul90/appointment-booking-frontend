@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { Participant, Appointment } from '@/api/entities';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import AppointmentDialog from '../components/appointments/AppointmentDialog';

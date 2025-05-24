@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import { Appointment, Participant } from '@/api/entities'
 import { format, addDays, isSameDay } from 'date-fns'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
