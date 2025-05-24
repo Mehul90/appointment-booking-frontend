@@ -95,7 +95,6 @@ export default function AppointmentDialog({
   const { isLoading: appointmentInProgress, deleteAppointmentModal } = useSelector(
     (state) => state.appointments
   )
-  console.log("🚀 ~ deleteAppointmentModal:", deleteAppointmentModal)
 
   useEffect(() => {
     if (isNew) {
