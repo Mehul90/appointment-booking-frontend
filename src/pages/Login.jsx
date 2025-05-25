@@ -1,3 +1,5 @@
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import Loader from "@/components/ui/loader";
 import { useToast } from "@/components/ui/use-toast";
 import { userLogin } from "@/store/slices/loginSlice";
@@ -83,18 +85,11 @@ const Login = () => {
                 <h2 className="text-2xl font-bold text-gray-800 text-center mb-6">Sign In</h2>
                 <form>
                     <div className="mb-4">
-                        <label
-                            htmlFor="email"
-                            className="block text-sm font-medium text-gray-600 mb-1"
-                        >
-                            Email address
-                        </label>
-                        <input
-                            type="email"
-                            id="email"
+                        <Label htmlFor='email'>Email address</Label>
+                        <Input
+                            id='email'
+                            className={errors.email ? 'border-red-500' : ''}
                             placeholder="you@example.com"
-                            required
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             onBlur={validateForm}
@@ -104,18 +99,13 @@ const Login = () => {
                         )}
                     </div>
                     <div className="mb-6">
-                        <label
-                            htmlFor="password"
-                            className="block text-sm font-medium text-gray-600 mb-1"
-                        >
-                            Password
-                        </label>
-                        <input
+                        <Label htmlFor='email'>Password</Label>
+                        <Input
                             type="password"
                             id="password"
                             placeholder="••••••••"
                             required
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                            className={errors.password ? 'border-red-500' : ''}
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             onBlur={validateForm}
