@@ -3,6 +3,18 @@ import { Calendar, CalendarDays, LogOut, Menu, PlusCircle, Users, X } from "luci
 import { useState } from "react";
 import { Link, Navigate, Outlet, useLocation } from "react-router-dom";
 
+/**
+ * MainLayout component provides the primary layout structure for the application,
+ * including a responsive sidebar navigation, header, and main content area.
+ * 
+ * - Redirects from the root path ("/") to the calendar page.
+ * - Displays a sidebar with navigation links and a logout option.
+ * - Handles mobile sidebar toggling and backdrop.
+ * - Renders child routes via <Outlet />.
+ *
+ * @component
+ * @returns {JSX.Element} The main layout structure with sidebar and content area.
+ */
 const MainLayout = () => {
     const { pathname } = useLocation();
 

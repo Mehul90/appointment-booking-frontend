@@ -105,8 +105,6 @@ export default function Calendar() {
   const handleSaveAppointment = async (appointmentData) => {
     try {
       if (isNewAppointment) {
-        // await Appointment.create(appointmentData)
-
         dispatch(createAppointment(appointmentData)).then((response) => {
           toast({
             title: 'Success',
@@ -126,7 +124,6 @@ export default function Calendar() {
         })
 
       } else {
-        // await Appointment.update(currentAppointment.id, appointmentData)
         dispatch(updateAppointment({ id: currentAppointment.id, data: appointmentData })).then(() => {
           setIsAppointmentDialogOpen(false)
           toast({
@@ -154,13 +151,9 @@ export default function Calendar() {
   }
 
   const handleDeleteAppointment = async (appointmentId) => {
-    // if (confirm('Are you sure you want to delete this appointment?')) {
       try {
-        // await Appointment.delete(appointmentId)
-
         dispatch(deleteAppointment(appointmentId)).then(() => {
           setIsAppointmentDialogOpen(false)
-          // loadData()
           toast({
             title: 'Success',
             description: 'Appointment deleted successfully',
@@ -186,7 +179,6 @@ export default function Calendar() {
           variant: 'destructive',
         })
       }
-    // }
   }
 
   const filteredAppointments = appointments.filter((appointment) => {
