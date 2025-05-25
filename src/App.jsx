@@ -54,7 +54,6 @@ class ErrorBoundary extends React.Component {
 
 function App() {
   return (
-    // <React.StrictMode>
       <ErrorBoundary>
         <div className='min-h-screen bg-background'>
           <Provider store={store}>
@@ -63,7 +62,6 @@ function App() {
           </Provider>
         </div>
       </ErrorBoundary>
-    // </React.StrictMode>
   )
 }
 
