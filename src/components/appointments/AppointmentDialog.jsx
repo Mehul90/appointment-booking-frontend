@@ -102,7 +102,7 @@ export default function AppointmentDialog({
         title: '',
         description: '',
         date: selectedDate || new Date(),
-        start_time: selectedTime || '09:00',
+        start_time: selectedTime[0] || '09:00',
         end_time: calculateEndTime(selectedTime || '09:00', 60),
         participants: [],
         location: '',
@@ -120,6 +120,8 @@ export default function AppointmentDialog({
   }, [isOpen, appointment, isNew, selectedDate, selectedTime])
 
   const calculateEndTime = (startTime, durationMinutes) => {
+    startTime = startTime[0]
+    
     if (!startTime) return '10:00'
 
     const [hours, minutes] = startTime.split(':').map(Number)

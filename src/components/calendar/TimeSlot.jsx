@@ -40,7 +40,7 @@ export default function TimeSlot({
               // Added relative positioning for potential future absolute positioning of events
               isSlotActuallyEmpty ? "hover:bg-gray-50 cursor-pointer" : "bg-gray-50" // Slightly change bg for busy slots
           }`}
-          onClick={isSlotActuallyEmpty ? () => {} : undefined}
+          onClick={isSlotActuallyEmpty ? handleClick : undefined}
       >
           {appointments.slice(0,1).map((appointment) => {
               // Only render the visual card for an appointment if this time slot is its start_time.
