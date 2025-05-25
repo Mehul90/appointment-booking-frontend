@@ -92,11 +92,11 @@ const MainLayout = () => {
 
                     <div className="mt-auto border-t">
                         <div className="px-4 py-4">
-                            <div className="flex items-center px-4 py-3 text-gray-700 rounded-lg hover:bg-gray-100 cursor-pointer">
+                            <div className="flex items-center text-gray-700 rounded-lg hover:bg-gray-100 cursor-pointer">
                                 <Link
                                     type=""
                                     // to={createPageUrl(item.path)}
-                                    className="w-full flex items-center px-4 py-3 rounded-lg transition-colors bg-indigo-50 text-indigo-700"
+                                    className="w-full flex items-center px-4 py-3 rounded-lg transition-colors text-indigo-700"
                                     onClick={(e) => {
                                         e.preventDefault();
                                         userLogout()
