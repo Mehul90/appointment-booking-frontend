@@ -147,7 +147,7 @@ export const appointmentsSlice = createSlice({
                 state.isLoading = false;
                 state.appointmentsList = [...state.appointmentsList, action.payload.data];
             })
-            .addCase(createAppointment.rejected, (state, action) => {
+            .addCase(createAppointment.rejected, (state) => {
                 state.isLoading = false;
                 state.appointmentsList = [...state.appointmentsList];
             })
@@ -157,16 +157,16 @@ export const appointmentsSlice = createSlice({
             .addCase(getAppointments.fulfilled, (state, action) => {
                 state.appointmentsList = [...action.payload.data];
             })
-            .addCase(getAppointments.rejected, (state, action) => {
+            .addCase(getAppointments.rejected, (state) => {
                 state.appointmentsList = [...state.appointmentsList];
             })
             .addCase(deleteAppointment.pending, (state) => {
                 state.deleteInProgress = true;
             })
-            .addCase(deleteAppointment.fulfilled, (state, action) => {
+            .addCase(deleteAppointment.fulfilled, (state) => {
                 state.deleteInProgress = false;
             })
-            .addCase(deleteAppointment.rejected, (state, action) => {
+            .addCase(deleteAppointment.rejected, (state) => {
                 state.deleteInProgress = false;
             })
     }

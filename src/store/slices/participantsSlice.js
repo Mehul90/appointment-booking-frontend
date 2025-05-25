@@ -126,36 +126,36 @@ export const participantsSlice = createSlice({
                 state.isLoading = false;
                 state.participantsList = [...action.payload.data];
             })
-            .addCase(getAllParticipants.rejected, (state, action) => {
+            .addCase(getAllParticipants.rejected, (state) => {
                 state.isLoading = false;
                 state.participantsList = [...state.participantsList];
             })
             .addCase(createParticipants.pending, (state) => {
                 state.isLoading = true;
             })
-            .addCase(createParticipants.fulfilled, (state, action) => {
+            .addCase(createParticipants.fulfilled, (state) => {
                 state.isLoading = false;
             })
-            .addCase(createParticipants.rejected, (state, action) => {
+            .addCase(createParticipants.rejected, (state) => {
                 state.isLoading = false;
             })
             .addCase(updateParticipants.pending, (state) => {
                 state.isLoading = true;
             }
             )
-            .addCase(updateParticipants.fulfilled, (state, action) => {
+            .addCase(updateParticipants.fulfilled, (state) => {
                 state.isLoading = false;
             })
-            .addCase(updateParticipants.rejected, (state, action) => {
+            .addCase(updateParticipants.rejected, (state) => {
                 state.isLoading = false;
             })
             .addCase(deleteParticipants.pending, (state) => {
                 state.deleteInProgress = true;
             })
-            .addCase(deleteParticipants.fulfilled, (state, action) => {
+            .addCase(deleteParticipants.fulfilled, (state) => {
                 state.deleteInProgress = false;
             })
-            .addCase(deleteParticipants.rejected, (state, action) => {
+            .addCase(deleteParticipants.rejected, (state) => {
                 state.deleteInProgress = false;
             });
     },
