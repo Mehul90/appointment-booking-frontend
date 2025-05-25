@@ -15,12 +15,18 @@ export default function TimeSlot({
   const dispatch = useDispatch();
 
 
-  const handleClick = () => {
-    // This click is for creating a new appointment in an empty slot.
-    // The 'appointments' prop correctly contains ALL appointments overlapping this slot.
-    // So, if appointments.length > 0, the slot is considered busy.
-    onTimeSlotClick(date, time);
-  };
+const handleClick = () => {
+    const today = new Date();
+    const slotDate = new Date(date);
+    // Zero out time for both dates
+    today.setHours(0, 0, 0, 0);
+    slotDate.setHours(0, 0, 0, 0);
+
+    if (slotDate >= today) {
+        onTimeSlotClick(date, time);
+    }
+    return; // Do not allow creating appointments in the past
+};
 
   const getParticipantInitials = (participant) => {
     return participant.name
