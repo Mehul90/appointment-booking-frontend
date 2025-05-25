@@ -165,9 +165,13 @@ export const appointmentsSlice = createSlice({
             })
             .addCase(deleteAppointment.fulfilled, (state) => {
                 state.deleteInProgress = false;
+                state.isSeeMoreAppointments = false;
+                state.seeMoreAppointsments = [];
             })
             .addCase(deleteAppointment.rejected, (state) => {
                 state.deleteInProgress = false;
+                state.isSeeMoreAppointments = false;
+                state.seeMoreAppointsments = [];
             })
     }
 })
